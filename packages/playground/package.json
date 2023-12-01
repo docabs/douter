@@ -1,0 +1,21 @@
+{
+  "name": "@docue/router-playground",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "play": "vite",
+    "build": "vite build",
+    "types": "vue-tsc --noEmit",
+    "preview": "vite preview --port 4173"
+  },
+  "dependencies": {
+    "docuejs": "^0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.19",
+    "@docue/compiler-sfc": "^0.0",
+    "typescript": "~5.1.6",
+    "vite": "^4.5.0",
+    "docue-router": "workspace:*"
+  }
+}

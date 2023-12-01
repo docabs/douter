@@ -1,0 +1,103 @@
+{
+  "name": "docue-router",
+  "version": "0.0.3",
+  "main": "index.js",
+  "unpkg": "dist/docue-router.global.js",
+  "jsdelivr": "dist/docue-router.global.js",
+  "module": "dist/docue-router.mjs",
+  "types": "dist/docue-router.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/docue-router.d.ts",
+      "node": {
+        "import": {
+          "production": "./dist/docue-router.node.mjs",
+          "development": "./dist/docue-router.node.mjs",
+          "default": "./dist/docue-router.node.mjs"
+        },
+        "require": {
+          "production": "./dist/docue-router.prod.cjs",
+          "development": "./dist/docue-router.cjs",
+          "default": "./index.js"
+        }
+      },
+      "import": "./dist/docue-router.mjs",
+      "require": "./index.js"
+    },
+    "./dist/*": "./dist/*",
+    "./vetur/*": "./vetur/*",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "index.js",
+    "dist/*.{js,cjs,mjs}",
+    "dist/docue-router.d.ts",
+    "vetur/tags.json",
+    "vetur/attributes.json",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "jest --watch",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1",
+    "build": "rimraf dist && rollup -c rollup.config.mjs",
+    "build:dts": "api-extractor run --local --verbose && tail -n +10 src/globalExtensions.ts >> dist/docue-router.d.ts",
+    "build:playground": "docue-tsc --noEmit && vite build --config playground/vite.config.ts",
+    "build:e2e": "docue-tsc --noEmit && vite build --config e2e/vite.config.mjs",
+    "build:size": "pnpm run build && rollup -c size-checks/rollup.config.mjs",
+    "dev:e2e": "vite --config e2e/vite.config.mjs",
+    "test:types": "tsc --build tsconfig.json",
+    "test:dts": "tsc -p ./test-dts/tsconfig.json",
+    "test:unit": "jest --coverage",
+    "test": "pnpm run test:types && pnpm run test:unit && pnpm run build && pnpm run build:dts && pnpm run test:e2e",
+    "test:e2e": "pnpm run test:e2e:headless",
+    "test:e2e:headless": "node e2e/runner.mjs --env chrome-headless",
+    "test:e2e:native": "node e2e/runner.mjs --env chrome",
+    "test:e2e:ci": "node e2e/runner.mjs --env chrome-headless --retries 2",
+    "test:e2e:bs": "node e2e/runner.mjs --local -e android5 --tag browserstack",
+    "test:e2e:bs-test": "node e2e/runner.mjs --local --env browserstack.local_chrome --tag browserstack"
+  },
+  "peerDependencies": {
+    "docuejs": "^0.0"
+  },
+  "vetur": {
+    "tags": "vetur/tags.json",
+    "attributes": "vetur/attributes.json"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.36.4",
+    "@rollup/plugin-alias": "^5.0.1",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@sucrase/jest-plugin": "^3.0.0",
+    "@types/jest": "^29.5.8",
+    "@types/jsdom": "^21.1.5",
+    "@types/nightwatch": "^2.3.28",
+    "@docue/compiler-sfc": "^0.0",
+    "@docue/server-renderer": "^0.0",
+    "@docue/test-utils": "^0.0",
+    "browserstack-local": "^1.5.5",
+    "chromedriver": "^119.0.1",
+    "connect-history-api-fallback": "^1.6.0",
+    "conventional-changelog-cli": "^2.1.1",
+    "dotenv": "^16.3.1",
+    "faked-promise": "^2.2.2",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-mock-warn": "^1.1.0",
+    "nightwatch": "^2.6.22",
+    "nightwatch-helpers": "^1.2.0",
+    "rimraf": "^5.0.5",
+    "rollup": "^3.29.4",
+    "rollup-plugin-analyzer": "^4.0.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "sucrase": "^3.34.0",
+    "typescript": "~5.1.6",
+    "vite": "^4.5.0",
+    "docuejs": "^0.0"
+  }
+}
