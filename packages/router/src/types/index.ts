@@ -7,7 +7,7 @@ import {
   DefineComponent,
 } from 'docuejs'
 import { RouteRecord, RouteRecordNormalized } from '../matcher/types'
-// import { HistoryState } from '../history/common'
+import { HistoryState } from '../history/common'
 // import { NavigationFailure } from '../errors'
 
 export type Lazy<T> = () => Promise<T>
@@ -95,12 +95,12 @@ export interface RouteLocationOptions {
    * is passed.
    */
   force?: boolean
-  //   /**
-  //    * State to save using the History API. This cannot contain any reactive
-  //    * values and some primitives like Symbols are forbidden. More info at
-  //    * https://developer.mozilla.org/en-US/docs/Web/API/History/state
-  //    */
-  //   state?: HistoryState
+  /**
+   * State to save using the History API. This cannot contain any reactive
+   * values and some primitives like Symbols are forbidden. More info at
+   * https://developer.mozilla.org/en-US/docs/Web/API/History/state
+   */
+  state?: HistoryState
 }
 
 /**

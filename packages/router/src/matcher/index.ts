@@ -8,7 +8,7 @@ import {
 } from '../types'
 import { createRouterError, ErrorTypes, MatcherError } from '../errors'
 import { createRouteRecordMatcher, RouteRecordMatcher } from './pathMatcher'
-// import { RouteRecordNormalized } from './types'
+import { RouteRecordNormalized } from './types'
 
 import type {
   PathParams,
@@ -74,120 +74,120 @@ export function createRouterMatcher(
     parent?: RouteRecordMatcher,
     originalRecord?: RouteRecordMatcher
   ) {
-    //     // used later on to remove by name
-    //     const isRootAdd = !originalRecord
-    //     const mainNormalizedRecord = normalizeRouteRecord(record)
+    // used later on to remove by name
+    const isRootAdd = !originalRecord
+    const mainNormalizedRecord = normalizeRouteRecord(record)
     //     if (__DEV__) {
     //       checkChildMissingNameWithEmptyPath(mainNormalizedRecord, parent)
     //     }
     //     // we might be the child of an alias
     //     mainNormalizedRecord.aliasOf = originalRecord && originalRecord.record
-    //     const options: PathParserOptions = mergeOptions(globalOptions, record)
-    //     // generate an array of records to correctly handle aliases
-    //     const normalizedRecords: (typeof mainNormalizedRecord)[] = [
-    //       mainNormalizedRecord,
-    //     ]
-    //     if ('alias' in record) {
-    //       const aliases =
-    //         typeof record.alias === 'string' ? [record.alias] : record.alias!
-    //       for (const alias of aliases) {
-    //         normalizedRecords.push(
-    //           assign({}, mainNormalizedRecord, {
-    //             // this allows us to hold a copy of the `components` option
-    //             // so that async components cache is hold on the original record
-    //             components: originalRecord
-    //               ? originalRecord.record.components
-    //               : mainNormalizedRecord.components,
-    //             path: alias,
-    //             // we might be the child of an alias
-    //             aliasOf: originalRecord
-    //               ? originalRecord.record
-    //               : mainNormalizedRecord,
-    //             // the aliases are always of the same kind as the original since they
-    //             // are defined on the same record
-    //           }) as typeof mainNormalizedRecord
-    //         )
-    //       }
-    //     }
+    const options: PathParserOptions = mergeOptions(globalOptions, record)
+    // generate an array of records to correctly handle aliases
+    const normalizedRecords: (typeof mainNormalizedRecord)[] = [
+      mainNormalizedRecord,
+    ]
+    if ('alias' in record) {
+      const aliases =
+        typeof record.alias === 'string' ? [record.alias] : record.alias!
+      //       for (const alias of aliases) {
+      //         normalizedRecords.push(
+      //           assign({}, mainNormalizedRecord, {
+      //             // this allows us to hold a copy of the `components` option
+      //             // so that async components cache is hold on the original record
+      //             components: originalRecord
+      //               ? originalRecord.record.components
+      //               : mainNormalizedRecord.components,
+      //             path: alias,
+      //             // we might be the child of an alias
+      //             aliasOf: originalRecord
+      //               ? originalRecord.record
+      //               : mainNormalizedRecord,
+      //             // the aliases are always of the same kind as the original since they
+      //             // are defined on the same record
+      //           }) as typeof mainNormalizedRecord
+      //         )
+      //       }
+    }
 
     let matcher: RouteRecordMatcher
     let originalMatcher: RouteRecordMatcher | undefined
 
-    //     for (const normalizedRecord of normalizedRecords) {
-    //       const { path } = normalizedRecord
-    //       // Build up the path for nested routes if the child isn't an absolute
-    //       // route. Only add the / delimiter if the child path isn't empty and if the
-    //       // parent path doesn't have a trailing slash
-    //       if (parent && path[0] !== '/') {
-    //         const parentPath = parent.record.path
-    //         const connectingSlash =
-    //           parentPath[parentPath.length - 1] === '/' ? '' : '/'
-    //         normalizedRecord.path =
-    //           parent.record.path + (path && connectingSlash + path)
-    //       }
+    for (const normalizedRecord of normalizedRecords) {
+      const { path } = normalizedRecord
+      // Build up the path for nested routes if the child isn't an absolute
+      // route. Only add the / delimiter if the child path isn't empty and if the
+      // parent path doesn't have a trailing slash
+      if (parent && path[0] !== '/') {
+        //         const parentPath = parent.record.path
+        //         const connectingSlash =
+        //           parentPath[parentPath.length - 1] === '/' ? '' : '/'
+        //         normalizedRecord.path =
+        //           parent.record.path + (path && connectingSlash + path)
+      }
 
-    //       if (__DEV__ && normalizedRecord.path === '*') {
-    //         throw new Error(
-    //           'Catch all routes ("*") must now be defined using a param with a custom regexp.\n' +
-    //             'See more at https://next.router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes.'
-    //         )
-    //       }
+      //       if (__DEV__ && normalizedRecord.path === '*') {
+      //         throw new Error(
+      //           'Catch all routes ("*") must now be defined using a param with a custom regexp.\n' +
+      //             'See more at https://next.router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes.'
+      //         )
+      //       }
 
-    //       // create the object beforehand, so it can be passed to children
-    //       matcher = createRouteRecordMatcher(normalizedRecord, parent, options)
+      // create the object beforehand, so it can be passed to children
+      matcher = createRouteRecordMatcher(normalizedRecord, parent, options)
 
-    //       if (__DEV__ && parent && path[0] === '/')
-    //         checkMissingParamsInAbsolutePath(matcher, parent)
+      //       if (__DEV__ && parent && path[0] === '/')
+      //         checkMissingParamsInAbsolutePath(matcher, parent)
 
-    //       // if we are an alias we must tell the original record that we exist,
-    //       // so we can be removed
-    //       if (originalRecord) {
-    //         originalRecord.alias.push(matcher)
-    //         if (__DEV__) {
-    //           checkSameParams(originalRecord, matcher)
-    //         }
-    //       } else {
-    //         // otherwise, the first record is the original and others are aliases
-    //         originalMatcher = originalMatcher || matcher
-    //         if (originalMatcher !== matcher) originalMatcher.alias.push(matcher)
+      //       // if we are an alias we must tell the original record that we exist,
+      //       // so we can be removed
+      //       if (originalRecord) {
+      //         originalRecord.alias.push(matcher)
+      //         if (__DEV__) {
+      //           checkSameParams(originalRecord, matcher)
+      //         }
+      //       } else {
+      //         // otherwise, the first record is the original and others are aliases
+      //         originalMatcher = originalMatcher || matcher
+      //         if (originalMatcher !== matcher) originalMatcher.alias.push(matcher)
 
-    //         // remove the route if named and only for the top record (avoid in nested calls)
-    //         // this works because the original record is the first one
-    //         if (isRootAdd && record.name && !isAliasRecord(matcher))
-    //           removeRoute(record.name)
-    //       }
+      //         // remove the route if named and only for the top record (avoid in nested calls)
+      //         // this works because the original record is the first one
+      //         if (isRootAdd && record.name && !isAliasRecord(matcher))
+      //           removeRoute(record.name)
+      //       }
 
-    //       if (mainNormalizedRecord.children) {
-    //         const children = mainNormalizedRecord.children
-    //         for (let i = 0; i < children.length; i++) {
-    //           addRoute(
-    //             children[i],
-    //             matcher,
-    //             originalRecord && originalRecord.children[i]
-    //           )
-    //         }
-    //       }
+      //       if (mainNormalizedRecord.children) {
+      //         const children = mainNormalizedRecord.children
+      //         for (let i = 0; i < children.length; i++) {
+      //           addRoute(
+      //             children[i],
+      //             matcher,
+      //             originalRecord && originalRecord.children[i]
+      //           )
+      //         }
+      //       }
 
-    //       // if there was no original record, then the first one was not an alias and all
-    //       // other aliases (if any) need to reference this record when adding children
-    //       originalRecord = originalRecord || matcher
+      //       // if there was no original record, then the first one was not an alias and all
+      //       // other aliases (if any) need to reference this record when adding children
+      //       originalRecord = originalRecord || matcher
 
-    //       // TODO: add normalized records for more flexibility
-    //       // if (parent && isAliasRecord(originalRecord)) {
-    //       //   parent.children.push(originalRecord)
-    //       // }
+      //       // TODO: add normalized records for more flexibility
+      //       // if (parent && isAliasRecord(originalRecord)) {
+      //       //   parent.children.push(originalRecord)
+      //       // }
 
-    //       // Avoid adding a record that doesn't display anything. This allows passing through records without a component to
-    //       // not be reached and pass through the catch all route
-    //       if (
-    //         (matcher.record.components &&
-    //           Object.keys(matcher.record.components).length) ||
-    //         matcher.record.name ||
-    //         matcher.record.redirect
-    //       ) {
-    //         insertMatcher(matcher)
-    //       }
-    //     }
+      // Avoid adding a record that doesn't display anything. This allows passing through records without a component to
+      // not be reached and pass through the catch all route
+      if (
+        (matcher.record.components &&
+          Object.keys(matcher.record.components).length) ||
+        matcher.record.name ||
+        matcher.record.redirect
+      ) {
+        insertMatcher(matcher)
+      }
+    }
 
     return originalMatcher
       ? () => {
@@ -221,22 +221,22 @@ export function createRouterMatcher(
     return matchers
   }
 
-  //   function insertMatcher(matcher: RouteRecordMatcher) {
-  //     let i = 0
-  //     while (
-  //       i < matchers.length &&
-  //       comparePathParserScore(matcher, matchers[i]) >= 0 &&
-  //       // Adding children with empty path should still appear before the parent
-  //       // https://github.com/vuejs/router/issues/1124
-  //       (matcher.record.path !== matchers[i].record.path ||
-  //         !isRecordChildOf(matcher, matchers[i]))
-  //     )
-  //       i++
-  //     matchers.splice(i, 0, matcher)
-  //     // only add the original record to the name map
-  //     if (matcher.record.name && !isAliasRecord(matcher))
-  //       matcherMap.set(matcher.record.name, matcher)
-  //   }
+  function insertMatcher(matcher: RouteRecordMatcher) {
+    let i = 0
+    //     while (
+    //       i < matchers.length &&
+    //       comparePathParserScore(matcher, matchers[i]) >= 0 &&
+    //       // Adding children with empty path should still appear before the parent
+    //       // https://github.com/vuejs/router/issues/1124
+    //       (matcher.record.path !== matchers[i].record.path ||
+    //         !isRecordChildOf(matcher, matchers[i]))
+    //     )
+    //       i++
+    matchers.splice(i, 0, matcher)
+    // only add the original record to the name map
+    if (matcher.record.name && !isAliasRecord(matcher))
+      matcherMap.set(matcher.record.name, matcher)
+  }
 
   function resolve(
     location: Readonly<MatcherLocationRaw>,
@@ -300,15 +300,15 @@ export function createRouterMatcher(
       //         )
       //       }
 
-      //       matcher = matchers.find(m => m.re.test(path))
-      //       // matcher should have a value after the loop
+      matcher = matchers.find(m => m.re.test(path))
+      // matcher should have a value after the loop
 
-      //       if (matcher) {
-      //         // we know the matcher works because we tested the regexp
-      //         params = matcher.parse(path)!
-      //         name = matcher.record.name
-      //       }
-      //       // location is a relative path
+      if (matcher) {
+        // we know the matcher works because we tested the regexp
+        params = matcher.parse(path)!
+        name = matcher.record.name
+      }
+      // location is a relative path
     } else {
       // match by name or path of current route
       matcher = currentLocation.name
@@ -327,13 +327,13 @@ export function createRouterMatcher(
     }
 
     const matched: MatcherLocation['matched'] = []
-    //     let parentMatcher: RouteRecordMatcher | undefined = matcher
-    //     while (parentMatcher) {
-    //       // reversed order so parents are at the beginning
+    let parentMatcher: RouteRecordMatcher | undefined = matcher
+    while (parentMatcher) {
+      // reversed order so parents are at the beginning
 
-    //       matched.unshift(parentMatcher.record)
-    //       parentMatcher = parentMatcher.parent
-    //     }
+      matched.unshift(parentMatcher.record)
+      parentMatcher = parentMatcher.parent
+    }
 
     return {
       name,
@@ -344,8 +344,8 @@ export function createRouterMatcher(
     }
   }
 
-  //   // add initial routes
-  //   routes.forEach(route => addRoute(route))
+  // add initial routes
+  routes.forEach(route => addRoute(route))
 
   return {
     addRoute,
@@ -369,70 +369,70 @@ export function createRouterMatcher(
 //   return newParams
 // }
 
-// /**
-//  * Normalizes a RouteRecordRaw. Creates a copy
-//  *
-//  * @param record
-//  * @returns the normalized version
-//  */
-// export function normalizeRouteRecord(
-//   record: RouteRecordRaw
-// ): RouteRecordNormalized {
-//   return {
-//     path: record.path,
-//     redirect: record.redirect,
-//     name: record.name,
-//     meta: record.meta || {},
-//     aliasOf: undefined,
-//     beforeEnter: record.beforeEnter,
-//     props: normalizeRecordProps(record),
-//     children: record.children || [],
-//     instances: {},
-//     leaveGuards: new Set(),
-//     updateGuards: new Set(),
-//     enterCallbacks: {},
-//     components:
-//       'components' in record
-//         ? record.components || null
-//         : record.component && { default: record.component },
-//   }
-// }
+/**
+ * Normalizes a RouteRecordRaw. Creates a copy
+ *
+ * @param record
+ * @returns the normalized version
+ */
+export function normalizeRouteRecord(
+  record: RouteRecordRaw
+): RouteRecordNormalized {
+  return {
+    path: record.path,
+    redirect: record.redirect,
+    name: record.name,
+    meta: record.meta || {},
+    aliasOf: undefined,
+    beforeEnter: record.beforeEnter,
+    props: normalizeRecordProps(record),
+    children: record.children || [],
+    instances: {},
+    leaveGuards: new Set(),
+    updateGuards: new Set(),
+    enterCallbacks: {},
+    components:
+      'components' in record
+        ? record.components || null
+        : record.component && { default: record.component },
+  }
+}
 
-// /**
-//  * Normalize the optional `props` in a record to always be an object similar to
-//  * components. Also accept a boolean for components.
-//  * @param record
-//  */
-// function normalizeRecordProps(
-//   record: RouteRecordRaw
-// ): Record<string, _RouteRecordProps> {
-//   const propsObject = {} as Record<string, _RouteRecordProps>
-//   // props does not exist on redirect records, but we can set false directly
-//   const props = record.props || false
-//   if ('component' in record) {
-//     propsObject.default = props
-//   } else {
-//     // NOTE: we could also allow a function to be applied to every component.
-//     // Would need user feedback for use cases
-//     for (const name in record.components)
-//       propsObject[name] = typeof props === 'object' ? props[name] : props
-//   }
+/**
+ * Normalize the optional `props` in a record to always be an object similar to
+ * components. Also accept a boolean for components.
+ * @param record
+ */
+function normalizeRecordProps(
+  record: RouteRecordRaw
+): Record<string, _RouteRecordProps> {
+  const propsObject = {} as Record<string, _RouteRecordProps>
+  //   // props does not exist on redirect records, but we can set false directly
+  //   const props = record.props || false
+  //   if ('component' in record) {
+  //     propsObject.default = props
+  //   } else {
+  //     // NOTE: we could also allow a function to be applied to every component.
+  //     // Would need user feedback for use cases
+  //     for (const name in record.components)
+  //       propsObject[name] = typeof props === 'object' ? props[name] : props
+  //   }
 
-//   return propsObject
-// }
+  return propsObject
+}
 
-// /**
-//  * Checks if a record or any of its parent is an alias
-//  * @param record
-//  */
-// function isAliasRecord(record: RouteRecordMatcher | undefined): boolean {
-//   while (record) {
-//     if (record.record.aliasOf) return true
-//     record = record.parent
-//   }
+/**
+ * Checks if a record or any of its parent is an alias
+ * @param record
+ */
+function isAliasRecord(record: RouteRecordMatcher | undefined): boolean {
+  while (record) {
+    if (record.record.aliasOf) return true
+    record = record.parent
+  }
 
-//   return false
-// }
+  return false
+}
 
 /**
  * Merge meta fields of an array of records

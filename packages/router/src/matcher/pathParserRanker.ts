@@ -27,16 +27,16 @@ export interface PathParser {
   //    * Keys that appeared in the path
   //    */
   //   keys: PathParserParamKey[]
-  //   /**
-  //    * Parses a url and returns the matched params or null if it doesn't match. An
-  //    * optional param that isn't preset will be an empty string. A repeatable
-  //    * param will be an array if there is at least one value.
-  //    *
-  //    * @param path - url to parse
-  //    * @returns a Params object, empty if there are no params. `null` if there is
-  //    * no match
-  //    */
-  //   parse(path: string): PathParams | null
+  /**
+   * Parses a url and returns the matched params or null if it doesn't match. An
+   * optional param that isn't preset will be an empty string. A repeatable
+   * param will be an array if there is at least one value.
+   *
+   * @param path - url to parse
+   * @returns a Params object, empty if there are no params. `null` if there is
+   * no match
+   */
+  parse(path: string): PathParams | null
 
   /**
    * Creates a string version of the url
@@ -96,25 +96,25 @@ const BASE_PATH_PARSER_OPTIONS: Required<_PathParserOptions> = {
   end: true,
 }
 
-// // Scoring values used in tokensToParser
-// const enum PathScore {
-//   _multiplier = 10,
-//   Root = 9 * _multiplier, // just /
-//   Segment = 4 * _multiplier, // /a-segment
-//   SubSegment = 3 * _multiplier, // /multiple-:things-in-one-:segment
-//   Static = 4 * _multiplier, // /static
-//   Dynamic = 2 * _multiplier, // /:someId
-//   BonusCustomRegExp = 1 * _multiplier, // /:someId(\\d+)
-//   BonusWildcard = -4 * _multiplier - BonusCustomRegExp, // /:namedWildcard(.*) we remove the bonus added by the custom regexp
-//   BonusRepeatable = -2 * _multiplier, // /:w+ or /:w*
-//   BonusOptional = -0.8 * _multiplier, // /:w? or /:w*
-//   // these two have to be under 0.1 so a strict /:page is still lower than /:a-:b
-//   BonusStrict = 0.07 * _multiplier, // when options strict: true is passed, as the regex omits \/?
-//   BonusCaseSensitive = 0.025 * _multiplier, // when options strict: true is passed, as the regex omits \/?
-// }
+// Scoring values used in tokensToParser
+const enum PathScore {
+  _multiplier = 10,
+  Root = 9 * _multiplier, // just /
+  Segment = 4 * _multiplier, // /a-segment
+  SubSegment = 3 * _multiplier, // /multiple-:things-in-one-:segment
+  Static = 4 * _multiplier, // /static
+  Dynamic = 2 * _multiplier, // /:someId
+  //   BonusCustomRegExp = 1 * _multiplier, // /:someId(\\d+)
+  //   BonusWildcard = -4 * _multiplier - BonusCustomRegExp, // /:namedWildcard(.*) we remove the bonus added by the custom regexp
+  //   BonusRepeatable = -2 * _multiplier, // /:w+ or /:w*
+  //   BonusOptional = -0.8 * _multiplier, // /:w? or /:w*
+  //   // these two have to be under 0.1 so a strict /:page is still lower than /:a-:b
+  //   BonusStrict = 0.07 * _multiplier, // when options strict: true is passed, as the regex omits \/?
+  BonusCaseSensitive = 0.025 * _multiplier, // when options strict: true is passed, as the regex omits \/?
+}
 
-// // Special Regex characters that must be escaped in static tokens
-// const REGEX_CHARS_RE = /[.+*?^${}()[\]/\\]/g
+// Special Regex characters that must be escaped in static tokens
+const REGEX_CHARS_RE = /[.+*?^${}()[\]/\\]/g
 
 /**
  * Creates a path parser from an array of Segments (a segment is an array of Tokens)
@@ -137,61 +137,61 @@ export function tokensToParser(
   //   const keys: PathParserParamKey[] = []
 
   for (const segment of segments) {
-    //     // the root segment needs special treatment
-    //     const segmentScores: number[] = segment.length ? [] : [PathScore.Root]
-    //     // allow trailing slash
-    //     if (options.strict && !segment.length) pattern += '/'
-    //     for (let tokenIndex = 0; tokenIndex < segment.length; tokenIndex++) {
-    //       const token = segment[tokenIndex]
-    //       // resets the score if we are inside a sub-segment /:a-other-:b
-    //       let subSegmentScore: number =
-    //         PathScore.Segment +
-    //         (options.sensitive ? PathScore.BonusCaseSensitive : 0)
-    //       if (token.type === TokenType.Static) {
-    //         // prepend the slash if we are starting a new segment
-    //         if (!tokenIndex) pattern += '/'
-    //         pattern += token.value.replace(REGEX_CHARS_RE, '\\$&')
-    //         subSegmentScore += PathScore.Static
-    //       } else if (token.type === TokenType.Param) {
-    //         const { value, repeatable, optional, regexp } = token
-    //         keys.push({
-    //           name: value,
-    //           repeatable,
-    //           optional,
-    //         })
-    //         const re = regexp ? regexp : BASE_PARAM_PATTERN
-    //         // the user provided a custom regexp /:id(\\d+)
-    //         if (re !== BASE_PARAM_PATTERN) {
-    //           subSegmentScore += PathScore.BonusCustomRegExp
-    //           // make sure the regexp is valid before using it
-    //           try {
-    //             new RegExp(`(${re})`)
-    //           } catch (err) {
-    //             throw new Error(
-    //               `Invalid custom RegExp for param "${value}" (${re}): ` +
-    //                 (err as Error).message
-    //             )
-    //           }
-    //         }
-    //         // when we repeat we must take care of the repeating leading slash
-    //         let subPattern = repeatable ? `((?:${re})(?:/(?:${re}))*)` : `(${re})`
-    //         // prepend the slash if we are starting a new segment
-    //         if (!tokenIndex)
-    //           subPattern =
-    //             // avoid an optional / if there are more segments e.g. /:p?-static
-    //             // or /:p?-:p2
-    //             optional && segment.length < 2
-    //               ? `(?:/${subPattern})`
-    //               : '/' + subPattern
-    //         if (optional) subPattern += '?'
-    //         pattern += subPattern
-    //         subSegmentScore += PathScore.Dynamic
-    //         if (optional) subSegmentScore += PathScore.BonusOptional
-    //         if (repeatable) subSegmentScore += PathScore.BonusRepeatable
-    //         if (re === '.*') subSegmentScore += PathScore.BonusWildcard
-    //       }
-    //       segmentScores.push(subSegmentScore)
-    //     }
+    // the root segment needs special treatment
+    const segmentScores: number[] = segment.length ? [] : [PathScore.Root]
+    // allow trailing slash
+    if (options.strict && !segment.length) pattern += '/'
+    for (let tokenIndex = 0; tokenIndex < segment.length; tokenIndex++) {
+      const token = segment[tokenIndex]
+      // resets the score if we are inside a sub-segment /:a-other-:b
+      let subSegmentScore: number =
+        PathScore.Segment +
+        (options.sensitive ? PathScore.BonusCaseSensitive : 0)
+      if (token.type === TokenType.Static) {
+        // prepend the slash if we are starting a new segment
+        if (!tokenIndex) pattern += '/'
+        pattern += token.value.replace(REGEX_CHARS_RE, '\\$&')
+        subSegmentScore += PathScore.Static
+      } else if (token.type === TokenType.Param) {
+        //         const { value, repeatable, optional, regexp } = token
+        //         keys.push({
+        //           name: value,
+        //           repeatable,
+        //           optional,
+        //         })
+        //         const re = regexp ? regexp : BASE_PARAM_PATTERN
+        //         // the user provided a custom regexp /:id(\\d+)
+        //         if (re !== BASE_PARAM_PATTERN) {
+        //           subSegmentScore += PathScore.BonusCustomRegExp
+        //           // make sure the regexp is valid before using it
+        //           try {
+        //             new RegExp(`(${re})`)
+        //           } catch (err) {
+        //             throw new Error(
+        //               `Invalid custom RegExp for param "${value}" (${re}): ` +
+        //                 (err as Error).message
+        //             )
+        //           }
+        //         }
+        //         // when we repeat we must take care of the repeating leading slash
+        //         let subPattern = repeatable ? `((?:${re})(?:/(?:${re}))*)` : `(${re})`
+        //         // prepend the slash if we are starting a new segment
+        //         if (!tokenIndex)
+        //           subPattern =
+        //             // avoid an optional / if there are more segments e.g. /:p?-static
+        //             // or /:p?-:p2
+        //             optional && segment.length < 2
+        //               ? `(?:/${subPattern})`
+        //               : '/' + subPattern
+        //         if (optional) subPattern += '?'
+        //         pattern += subPattern
+        //         subSegmentScore += PathScore.Dynamic
+        //         if (optional) subSegmentScore += PathScore.BonusOptional
+        //         if (repeatable) subSegmentScore += PathScore.BonusRepeatable
+        //         if (re === '.*') subSegmentScore += PathScore.BonusWildcard
+      }
+      //       segmentScores.push(subSegmentScore)
+    }
     //     // an empty array like /home/ -> [[{home}], []]
     //     // if (!segment.length) pattern += '/'
     //     score.push(segmentScores)
@@ -203,29 +203,29 @@ export function tokensToParser(
   //     score[i][score[i].length - 1] += PathScore.BonusStrict
   //   }
 
-  //   // TODO: dev only warn double trailing slash
-  //   if (!options.strict) pattern += '/?'
+  // TODO: dev only warn double trailing slash
+  if (!options.strict) pattern += '/?'
 
-  //   if (options.end) pattern += '$'
-  //   // allow paths like /dynamic to only match dynamic or dynamic/... but not dynamic_something_else
-  //   else if (options.strict) pattern += '(?:/|$)'
+  if (options.end) pattern += '$'
+  // allow paths like /dynamic to only match dynamic or dynamic/... but not dynamic_something_else
+  else if (options.strict) pattern += '(?:/|$)'
 
   const re = new RegExp(pattern, options.sensitive ? '' : 'i')
 
-  //   function parse(path: string): PathParams | null {
-  //     const match = path.match(re)
-  //     const params: PathParams = {}
+  function parse(path: string): PathParams | null {
+    const match = path.match(re)
+    const params: PathParams = {}
 
-  //     if (!match) return null
+    if (!match) return null
 
-  //     for (let i = 1; i < match.length; i++) {
-  //       const value: string = match[i] || ''
-  //       const key = keys[i - 1]
-  //       params[key.name] = value && key.repeatable ? value.split('/') : value
-  //     }
+    for (let i = 1; i < match.length; i++) {
+      //       const value: string = match[i] || ''
+      //       const key = keys[i - 1]
+      //       params[key.name] = value && key.repeatable ? value.split('/') : value
+    }
 
-  //     return params
-  //   }
+    return params
+  }
 
   function stringify(params: PathParams): string {
     let path = ''
@@ -276,7 +276,7 @@ export function tokensToParser(
     re,
     // score,
     // keys,
-    // parse,
+    parse,
     stringify,
   }
 }

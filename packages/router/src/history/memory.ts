@@ -1,14 +1,14 @@
 import {
   RouterHistory,
   // NavigationCallback,
-  // START,
-  // HistoryState,
+  START,
+  HistoryState,
   // NavigationType,
   // NavigationDirection,
   // NavigationInformation,
   normalizeBase,
-  // createHref,
-  // HistoryLocation,
+  createHref,
+  HistoryLocation,
 } from './common'
 
 // /**
@@ -20,18 +20,18 @@ import {
 //  */
 export function createMemoryHistory(base: string = ''): RouterHistory {
   //   let listeners: NavigationCallback[] = []
-  //   let queue: HistoryLocation[] = [START]
-  //   let position: number = 0
+  let queue: HistoryLocation[] = [START]
+  let position: number = 0
   base = normalizeBase(base)
 
-  //   function setLocation(location: HistoryLocation) {
-  //     position++
-  //     if (position !== queue.length) {
-  //       // we are in the middle, we remove everything from here in the queue
-  //       queue.splice(position)
-  //     }
-  //     queue.push(location)
-  //   }
+  function setLocation(location: HistoryLocation) {
+    position++
+    if (position !== queue.length) {
+      // we are in the middle, we remove everything from here in the queue
+      queue.splice(position)
+    }
+    queue.push(location)
+  }
 
   //   function triggerListeners(
   //     to: HistoryLocation,
@@ -54,15 +54,15 @@ export function createMemoryHistory(base: string = ''): RouterHistory {
     //     // TODO: should be kept in queue
     //     state: {},
     base,
-    //     createHref: createHref.bind(null, base),
-    //     replace(to) {
-    //       // remove current entry and decrement position
-    //       queue.splice(position--, 1)
-    //       setLocation(to)
-    //     },
-    //     push(to, data?: HistoryState) {
-    //       setLocation(to)
-    //     },
+    createHref: createHref.bind(null, base),
+    replace(to) {
+      // remove current entry and decrement position
+      queue.splice(position--, 1)
+      setLocation(to)
+    },
+    push(to, data?: HistoryState) {
+      setLocation(to)
+    },
     //     listen(callback) {
     //       listeners.push(callback)
     //       return () => {

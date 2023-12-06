@@ -17,8 +17,8 @@ import {
 //   NavigationFailure,
 //   NavigationRedirectError,
 // } from './errors'
-// import { ComponentOptions, onUnmounted, onActivated, onDeactivated } from 'vue'
-// import { inject, getCurrentInstance } from 'vue'
+// import { ComponentOptions, onUnmounted, onActivated, onDeactivated } from 'docue'
+// import { inject, getCurrentInstance } from 'docue'
 // import { matchedRouteKey } from './injectionSymbols'
 import { RouteRecordNormalized } from './matcher/types'
 // import { isESModule } from './utils'
@@ -67,7 +67,7 @@ import { RouteRecordNormalized } from './matcher/types'
 //   if (!activeRecord) {
 //     __DEV__ &&
 //       warn(
-//         'No active route record was found when calling `onBeforeRouteLeave()`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.vue?'
+//         'No active route record was found when calling `onBeforeRouteLeave()`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.docue?'
 //       )
 //     return
 //   }
@@ -99,7 +99,7 @@ import { RouteRecordNormalized } from './matcher/types'
 //   if (!activeRecord) {
 //     __DEV__ &&
 //       warn(
-//         'No active route record was found when calling `onBeforeRouteUpdate()`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.vue?'
+//         'No active route record was found when calling `onBeforeRouteUpdate()`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.docue?'
 //       )
 //     return
 //   }
@@ -235,107 +235,107 @@ export function extractComponentsGuards(
 ) {
   const guards: Array<() => Promise<void>> = []
 
-  //   for (const record of matched) {
-  //     if (__DEV__ && !record.components && !record.children.length) {
-  //       warn(
-  //         `Record with path "${record.path}" is either missing a "component(s)"` +
-  //           ` or "children" property.`
-  //       )
-  //     }
-  //     for (const name in record.components) {
-  //       let rawComponent = record.components[name]
-  //       if (__DEV__) {
-  //         if (
-  //           !rawComponent ||
-  //           (typeof rawComponent !== 'object' &&
-  //             typeof rawComponent !== 'function')
-  //         ) {
-  //           warn(
-  //             `Component "${name}" in record with path "${record.path}" is not` +
-  //               ` a valid component. Received "${String(rawComponent)}".`
-  //           )
-  //           // throw to ensure we stop here but warn to ensure the message isn't
-  //           // missed by the user
-  //           throw new Error('Invalid route component')
-  //         } else if ('then' in rawComponent) {
-  //           // warn if user wrote import('/component.vue') instead of () =>
-  //           // import('./component.vue')
-  //           warn(
-  //             `Component "${name}" in record with path "${record.path}" is a ` +
-  //               `Promise instead of a function that returns a Promise. Did you ` +
-  //               `write "import('./MyPage.vue')" instead of ` +
-  //               `"() => import('./MyPage.vue')" ? This will break in ` +
-  //               `production if not fixed.`
-  //           )
-  //           const promise = rawComponent
-  //           rawComponent = () => promise
-  //         } else if (
-  //           (rawComponent as any).__asyncLoader &&
-  //           // warn only once per component
-  //           !(rawComponent as any).__warnedDefineAsync
-  //         ) {
-  //           ;(rawComponent as any).__warnedDefineAsync = true
-  //           warn(
-  //             `Component "${name}" in record with path "${record.path}" is defined ` +
-  //               `using "defineAsyncComponent()". ` +
-  //               `Write "() => import('./MyPage.vue')" instead of ` +
-  //               `"defineAsyncComponent(() => import('./MyPage.vue'))".`
-  //           )
-  //         }
-  //       }
+  for (const record of matched) {
+    //     if (__DEV__ && !record.components && !record.children.length) {
+    //       warn(
+    //         `Record with path "${record.path}" is either missing a "component(s)"` +
+    //           ` or "children" property.`
+    //       )
+    //     }
+    for (const name in record.components) {
+      let rawComponent = record.components[name]
+      //       if (__DEV__) {
+      //         if (
+      //           !rawComponent ||
+      //           (typeof rawComponent !== 'object' &&
+      //             typeof rawComponent !== 'function')
+      //         ) {
+      //           warn(
+      //             `Component "${name}" in record with path "${record.path}" is not` +
+      //               ` a valid component. Received "${String(rawComponent)}".`
+      //           )
+      //           // throw to ensure we stop here but warn to ensure the message isn't
+      //           // missed by the user
+      //           throw new Error('Invalid route component')
+      //         } else if ('then' in rawComponent) {
+      //           // warn if user wrote import('/component.docue') instead of () =>
+      //           // import('./component.docue')
+      //           warn(
+      //             `Component "${name}" in record with path "${record.path}" is a ` +
+      //               `Promise instead of a function that returns a Promise. Did you ` +
+      //               `write "import('./MyPage.docue')" instead of ` +
+      //               `"() => import('./MyPage.docue')" ? This will break in ` +
+      //               `production if not fixed.`
+      //           )
+      //           const promise = rawComponent
+      //           rawComponent = () => promise
+      //         } else if (
+      //           (rawComponent as any).__asyncLoader &&
+      //           // warn only once per component
+      //           !(rawComponent as any).__warnedDefineAsync
+      //         ) {
+      //           ;(rawComponent as any).__warnedDefineAsync = true
+      //           warn(
+      //             `Component "${name}" in record with path "${record.path}" is defined ` +
+      //               `using "defineAsyncComponent()". ` +
+      //               `Write "() => import('./MyPage.docue')" instead of ` +
+      //               `"defineAsyncComponent(() => import('./MyPage.docue'))".`
+      //           )
+      //         }
+      //       }
 
-  //       // skip update and leave guards if the route component is not mounted
-  //       if (guardType !== 'beforeRouteEnter' && !record.instances[name]) continue
+      //       // skip update and leave guards if the route component is not mounted
+      //       if (guardType !== 'beforeRouteEnter' && !record.instances[name]) continue
 
-  //       if (isRouteComponent(rawComponent)) {
-  //         // __vccOpts is added by vue-class-component and contain the regular options
-  //         const options: ComponentOptions =
-  //           (rawComponent as any).__vccOpts || rawComponent
-  //         const guard = options[guardType]
-  //         guard && guards.push(guardToPromiseFn(guard, to, from, record, name))
-  //       } else {
-  //         // start requesting the chunk already
-  //         let componentPromise: Promise<
-  //           RouteComponent | null | undefined | void
-  //         > = (rawComponent as Lazy<RouteComponent>)()
+      //       if (isRouteComponent(rawComponent)) {
+      //         // __vccOpts is added by docue-class-component and contain the regular options
+      //         const options: ComponentOptions =
+      //           (rawComponent as any).__vccOpts || rawComponent
+      //         const guard = options[guardType]
+      //         guard && guards.push(guardToPromiseFn(guard, to, from, record, name))
+      //       } else {
+      //         // start requesting the chunk already
+      //         let componentPromise: Promise<
+      //           RouteComponent | null | undefined | void
+      //         > = (rawComponent as Lazy<RouteComponent>)()
 
-  //         if (__DEV__ && !('catch' in componentPromise)) {
-  //           warn(
-  //             `Component "${name}" in record with path "${record.path}" is a function that does not return a Promise. If you were passing a functional component, make sure to add a "displayName" to the component. This will break in production if not fixed.`
-  //           )
-  //           componentPromise = Promise.resolve(componentPromise as RouteComponent)
-  //         }
+      //         if (__DEV__ && !('catch' in componentPromise)) {
+      //           warn(
+      //             `Component "${name}" in record with path "${record.path}" is a function that does not return a Promise. If you were passing a functional component, make sure to add a "displayName" to the component. This will break in production if not fixed.`
+      //           )
+      //           componentPromise = Promise.resolve(componentPromise as RouteComponent)
+      //         }
 
-  //         guards.push(() =>
-  //           componentPromise.then(resolved => {
-  //             if (!resolved)
-  //               return Promise.reject(
-  //                 new Error(
-  //                   `Couldn't resolve component "${name}" at "${record.path}"`
-  //                 )
-  //               )
-  //             const resolvedComponent = isESModule(resolved)
-  //               ? resolved.default
-  //               : resolved
-  //             // replace the function with the resolved component
-  //             // cannot be null or undefined because we went into the for loop
-  //             record.components![name] = resolvedComponent
-  //             // __vccOpts is added by vue-class-component and contain the regular options
-  //             const options: ComponentOptions =
-  //               (resolvedComponent as any).__vccOpts || resolvedComponent
-  //             const guard = options[guardType]
-  //             return guard && guardToPromiseFn(guard, to, from, record, name)()
-  //           })
-  //         )
-  //       }
-  //     }
-  //   }
+      //         guards.push(() =>
+      //           componentPromise.then(resolved => {
+      //             if (!resolved)
+      //               return Promise.reject(
+      //                 new Error(
+      //                   `Couldn't resolve component "${name}" at "${record.path}"`
+      //                 )
+      //               )
+      //             const resolvedComponent = isESModule(resolved)
+      //               ? resolved.default
+      //               : resolved
+      //             // replace the function with the resolved component
+      //             // cannot be null or undefined because we went into the for loop
+      //             record.components![name] = resolvedComponent
+      //             // __vccOpts is added by docue-class-component and contain the regular options
+      //             const options: ComponentOptions =
+      //               (resolvedComponent as any).__vccOpts || resolvedComponent
+      //             const guard = options[guardType]
+      //             return guard && guardToPromiseFn(guard, to, from, record, name)()
+      //           })
+      //         )
+      //       }
+    }
+  }
 
   return guards
 }
 
 // /**
-//  * Allows differentiating lazy components from functional components and vue-class-component
+//  * Allows differentiating lazy components from functional components and docue-class-component
 //  * @internal
 //  *
 //  * @param component

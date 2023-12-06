@@ -116,14 +116,14 @@ describe('Router', () => {
       expect(history.push).toHaveBeenCalledWith('/foo', undefined)
     })
 
-  //   it('calls history.replace with router.replace', async () => {
-  //     const history = createMemoryHistory()
-  //     const { router } = await newRouter({ history })
-  //     jest.spyOn(history, 'replace')
-  //     await router.replace('/foo')
-  //     expect(history.replace).toHaveBeenCalledTimes(1)
-  //     expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
-  //   })
+    it('calls history.replace with router.replace', async () => {
+      const history = createMemoryHistory()
+      const { router } = await newRouter({ history })
+      jest.spyOn(history, 'replace')
+      await router.replace('/foo')
+      expect(history.replace).toHaveBeenCalledTimes(1)
+      expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
+    })
 
   //   it('parses query and hash with router.replace', async () => {
   //     const history = createMemoryHistory()

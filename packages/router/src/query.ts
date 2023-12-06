@@ -42,17 +42,17 @@ export type LocationQueryRaw = Record<
   LocationQueryValueRaw | LocationQueryValueRaw[]
 >
 
-// /**
-//  * Transforms a queryString into a {@link LocationQuery} object. Accept both, a
-//  * version with the leading `?` and without Should work as URLSearchParams
+/**
+ * Transforms a queryString into a {@link LocationQuery} object. Accept both, a
+ * version with the leading `?` and without Should work as URLSearchParams
 
-//  * @internal
-//  *
-//  * @param search - search string to parse
-//  * @returns a query object
-//  */
-// export function parseQuery(search: string): LocationQuery {
-//   const query: LocationQuery = {}
+ * @internal
+ *
+ * @param search - search string to parse
+ * @returns a query object
+ */
+export function parseQuery(search: string): LocationQuery {
+  const query: LocationQuery = {}
 //   // avoid creating an object with an empty key and empty value
 //   // because of split('&')
 //   if (search === '' || search === '?') return query
@@ -78,20 +78,20 @@ export type LocationQueryRaw = Record<
 //       query[key] = value
 //     }
 //   }
-//   return query
-// }
+  return query
+}
 
-// /**
-//  * Stringifies a {@link LocationQueryRaw} object. Like `URLSearchParams`, it
-//  * doesn't prepend a `?`
-//  *
-//  * @internal
-//  *
-//  * @param query - query object to stringify
-//  * @returns string version of the query without the leading `?`
-//  */
-// export function stringifyQuery(query: LocationQueryRaw): string {
-//   let search = ''
+/**
+ * Stringifies a {@link LocationQueryRaw} object. Like `URLSearchParams`, it
+ * doesn't prepend a `?`
+ *
+ * @internal
+ *
+ * @param query - query object to stringify
+ * @returns string version of the query without the leading `?`
+ */
+export function stringifyQuery(query: LocationQueryRaw): string {
+  let search = ''
 //   for (let key in query) {
 //     const value = query[key]
 //     key = encodeQueryKey(key)
@@ -118,21 +118,21 @@ export type LocationQueryRaw = Record<
 //     })
 //   }
 
-//   return search
-// }
+  return search
+}
 
-// /**
-//  * Transforms a {@link LocationQueryRaw} into a {@link LocationQuery} by casting
-//  * numbers into strings, removing keys with an undefined value and replacing
-//  * undefined with null in arrays
-//  *
-//  * @param query - query object to normalize
-//  * @returns a normalized query object
-//  */
-// export function normalizeQuery(
-//   query: LocationQueryRaw | undefined
-// ): LocationQuery {
-//   const normalizedQuery: LocationQuery = {}
+/**
+ * Transforms a {@link LocationQueryRaw} into a {@link LocationQuery} by casting
+ * numbers into strings, removing keys with an undefined value and replacing
+ * undefined with null in arrays
+ *
+ * @param query - query object to normalize
+ * @returns a normalized query object
+ */
+export function normalizeQuery(
+  query: LocationQueryRaw | undefined
+): LocationQuery {
+  const normalizedQuery: LocationQuery = {}
 
 //   for (const key in query) {
 //     const value = query[key]
@@ -145,5 +145,5 @@ export type LocationQueryRaw = Record<
 //     }
 //   }
 
-//   return normalizedQuery
-// }
+  return normalizedQuery
+}

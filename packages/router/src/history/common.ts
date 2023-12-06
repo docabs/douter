@@ -58,12 +58,12 @@ export enum NavigationType {
 //   ): void
 // }
 
-// /**
-//  * Starting location for Histories
-//  */
-// export const START: HistoryLocation = ''
+/**
+ * Starting location for Histories
+ */
+export const START: HistoryLocation = ''
 
-// export type ValueContainer<T> = { value: T }
+export type ValueContainer<T> = { value: T }
 
 /**
  * Interface implemented by History implementations that can be passed to the
@@ -97,15 +97,15 @@ export interface RouterHistory {
    * navigation entry
    */
   push(to: HistoryLocation, data?: HistoryState): void
-  //   /**
-  //    * Same as {@link RouterHistory.push} but performs a `history.replaceState`
-  //    * instead of `history.pushState`
-  //    *
-  //    * @param to - location to set
-  //    * @param data - optional {@link HistoryState} to be associated with the
-  //    * navigation entry
-  //    */
-  //   replace(to: HistoryLocation, data?: HistoryState): void
+  /**
+   * Same as {@link RouterHistory.push} but performs a `history.replaceState`
+   * instead of `history.pushState`
+   *
+   * @param to - location to set
+   * @param data - optional {@link HistoryState} to be associated with the
+   * navigation entry
+   */
+  replace(to: HistoryLocation, data?: HistoryState): void
 
   //   /**
   //    * Traverses history in a given direction.
@@ -134,12 +134,12 @@ export interface RouterHistory {
   //    */
   //   listen(callback: NavigationCallback): () => void
 
-  //   /**
-  //    * Generates the corresponding href to be used in an anchor tag.
-  //    *
-  //    * @param location - history location that should create an href
-  //    */
-  //   createHref(location: HistoryLocation): string
+  /**
+   * Generates the corresponding href to be used in an anchor tag.
+   *
+   * @param location - history location that should create an href
+   */
+  createHref(location: HistoryLocation): string
 
   //   /**
   //    * Clears any event listener attached by the history implementation.
@@ -178,8 +178,8 @@ export function normalizeBase(base?: string): string {
   return removeTrailingSlash(base)
 }
 
-// // remove any character before the hash
-// const BEFORE_HASH_RE = /^[^#]+#/
-// export function createHref(base: string, location: HistoryLocation): string {
-//   return base.replace(BEFORE_HASH_RE, '#') + location
-// }
+// remove any character before the hash
+const BEFORE_HASH_RE = /^[^#]+#/
+export function createHref(base: string, location: HistoryLocation): string {
+  return base.replace(BEFORE_HASH_RE, '#') + location
+}

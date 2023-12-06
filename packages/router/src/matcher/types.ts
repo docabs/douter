@@ -1,5 +1,5 @@
 import {
-  // RouteRecordMultipleViews,
+  RouteRecordMultipleViews,
   NavigationGuard,
   _RouteRecordBase,
   _RouteRecordProps,
@@ -25,10 +25,10 @@ export interface RouteRecordNormalized {
    * {@inheritDoc _RouteRecordBase.name}
    */
   name: _RouteRecordBase['name']
-  //   /**
-  //    * {@inheritDoc RouteRecordMultipleViews.components}
-  //    */
-  //   components: RouteRecordMultipleViews['components'] | null | undefined
+  /**
+   * {@inheritDoc RouteRecordMultipleViews.components}
+   */
+  components: RouteRecordMultipleViews['components'] | null | undefined
   /**
    * Nested route records.
    */
