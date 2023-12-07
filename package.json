@@ -9,6 +9,7 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "pnpm run --filter ./packages/router -r dev",
     "release": "node scripts/release.mjs",
     "size": "node scripts/check-size.mjs",
     "build": "pnpm run -r build",

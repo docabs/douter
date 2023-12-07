@@ -8,14 +8,14 @@
       "type": "node",
       "name": "vscode-jest-tests",
       "request": "launch",
+      "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
       "args": [
         "--runInBand"
       ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "disableOptimisticBPs": true,
-      "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      "disableOptimisticBPs": true
     }
   ]
 }

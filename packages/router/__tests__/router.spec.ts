@@ -125,30 +125,30 @@ describe('Router', () => {
       expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
     })
 
-  //   it('parses query and hash with router.replace', async () => {
-  //     const history = createMemoryHistory()
-  //     const { router } = await newRouter({ history })
-  //     jest.spyOn(history, 'replace')
-  //     await router.replace('/foo?q=2#a')
-  //     expect(history.replace).toHaveBeenCalledTimes(1)
-  //     expect(history.replace).toHaveBeenCalledWith(
-  //       '/foo?q=2#a',
-  //       expect.anything()
-  //     )
-  //   })
+    it('parses query and hash with router.replace', async () => {
+      const history = createMemoryHistory()
+      const { router } = await newRouter({ history })
+      jest.spyOn(history, 'replace')
+      await router.replace('/foo?q=2#a')
+      expect(history.replace).toHaveBeenCalledTimes(1)
+      expect(history.replace).toHaveBeenCalledWith(
+        '/foo?q=2#a',
+        expect.anything()
+      )
+    })
 
-  //   it('replaces if a guard redirects', async () => {
-  //     const history = createMemoryHistory()
-  //     const { router } = await newRouter({ history })
-  //     // move somewhere else
-  //     await router.push('/search')
-  //     jest.spyOn(history, 'replace')
-  //     jest.spyOn(history, 'push')
-  //     await router.replace('/home-before')
-  //     expect(history.push).toHaveBeenCalledTimes(0)
-  //     expect(history.replace).toHaveBeenCalledTimes(1)
-  //     expect(history.replace).toHaveBeenCalledWith('/', expect.anything())
-  //   })
+    it('replaces if a guard redirects', async () => {
+      const history = createMemoryHistory()
+      const { router } = await newRouter({ history })
+      // move somewhere else
+      await router.push('/search')
+      jest.spyOn(history, 'replace')
+      jest.spyOn(history, 'push')
+      await router.replace('/home-before')
+      expect(history.push).toHaveBeenCalledTimes(0)
+      expect(history.replace).toHaveBeenCalledTimes(1)
+      expect(history.replace).toHaveBeenCalledWith('/', expect.anything())
+    })
 
   //   it('replaces if a guard redirect replaces', async () => {
   //     const history = createMemoryHistory()
