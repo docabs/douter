@@ -119,11 +119,11 @@ export function createRouterMatcher(
       // route. Only add the / delimiter if the child path isn't empty and if the
       // parent path doesn't have a trailing slash
       if (parent && path[0] !== '/') {
-        //         const parentPath = parent.record.path
-        //         const connectingSlash =
-        //           parentPath[parentPath.length - 1] === '/' ? '' : '/'
-        //         normalizedRecord.path =
-        //           parent.record.path + (path && connectingSlash + path)
+        const parentPath = parent.record.path
+        const connectingSlash =
+          parentPath[parentPath.length - 1] === '/' ? '' : '/'
+        normalizedRecord.path =
+          parent.record.path + (path && connectingSlash + path)
       }
 
       //       if (__DEV__ && normalizedRecord.path === '*') {
@@ -139,34 +139,33 @@ export function createRouterMatcher(
       //       if (__DEV__ && parent && path[0] === '/')
       //         checkMissingParamsInAbsolutePath(matcher, parent)
 
-      //       // if we are an alias we must tell the original record that we exist,
-      //       // so we can be removed
-      //       if (originalRecord) {
-      //         originalRecord.alias.push(matcher)
-      //         if (__DEV__) {
-      //           checkSameParams(originalRecord, matcher)
-      //         }
-      //       } else {
-      //         // otherwise, the first record is the original and others are aliases
-      //         originalMatcher = originalMatcher || matcher
-      //         if (originalMatcher !== matcher) originalMatcher.alias.push(matcher)
+      // if we are an alias we must tell the original record that we exist,
+      // so we can be removed
+      if (originalRecord) {
+        //         originalRecord.alias.push(matcher)
+        //         if (__DEV__) {
+        //           checkSameParams(originalRecord, matcher)
+        //         }
+      } else {
+        //         // otherwise, the first record is the original and others are aliases
+        //         originalMatcher = originalMatcher || matcher
+        //         if (originalMatcher !== matcher) originalMatcher.alias.push(matcher)
+        //         // remove the route if named and only for the top record (avoid in nested calls)
+        //         // this works because the original record is the first one
+        //         if (isRootAdd && record.name && !isAliasRecord(matcher))
+        //           removeRoute(record.name)
+      }
 
-      //         // remove the route if named and only for the top record (avoid in nested calls)
-      //         // this works because the original record is the first one
-      //         if (isRootAdd && record.name && !isAliasRecord(matcher))
-      //           removeRoute(record.name)
-      //       }
-
-      //       if (mainNormalizedRecord.children) {
-      //         const children = mainNormalizedRecord.children
-      //         for (let i = 0; i < children.length; i++) {
-      //           addRoute(
-      //             children[i],
-      //             matcher,
-      //             originalRecord && originalRecord.children[i]
-      //           )
-      //         }
-      //       }
+      if (mainNormalizedRecord.children) {
+        const children = mainNormalizedRecord.children
+        for (let i = 0; i < children.length; i++) {
+          addRoute(
+            children[i],
+            matcher,
+            originalRecord && originalRecord.children[i]
+          )
+        }
+      }
 
       //       // if there was no original record, then the first one was not an alias and all
       //       // other aliases (if any) need to reference this record when adding children
@@ -271,22 +270,22 @@ export function createRouterMatcher(
       //       }
 
       name = matcher.record.name
-      //       params = assign(
-      //         // paramsFromLocation is a new object
-      //         paramsFromLocation(
-      //           currentLocation.params,
-      //           // only keep params that exist in the resolved location
-      //           // TODO: only keep optional params coming from a parent record
-      //           matcher.keys.filter(k => !k.optional).map(k => k.name)
-      //         ),
-      //         // discard any existing params in the current location that do not exist here
-      //         // #1497 this ensures better active/exact matching
-      //         location.params &&
-      //           paramsFromLocation(
-      //             location.params,
-      //             matcher.keys.map(k => k.name)
-      //           )
-      //       )
+      params = assign(
+        // paramsFromLocation is a new object
+        paramsFromLocation(
+          currentLocation.params,
+          // only keep params that exist in the resolved location
+          // TODO: only keep optional params coming from a parent record
+          matcher.keys.filter(k => !k.optional).map(k => k.name)
+        ),
+        // discard any existing params in the current location that do not exist here
+        // #1497 this ensures better active/exact matching
+        location.params &&
+          paramsFromLocation(
+            location.params,
+            matcher.keys.map(k => k.name)
+          )
+      )
       // throws if cannot be stringified
       path = matcher.stringify(params)
     } else if ('path' in location) {
@@ -356,18 +355,18 @@ export function createRouterMatcher(
   }
 }
 
-// function paramsFromLocation(
-//   params: MatcherLocation['params'],
-//   keys: string[]
-// ): MatcherLocation['params'] {
-//   const newParams = {} as MatcherLocation['params']
+function paramsFromLocation(
+  params: MatcherLocation['params'],
+  keys: string[]
+): MatcherLocation['params'] {
+  const newParams = {} as MatcherLocation['params']
 
-//   for (const key of keys) {
-//     if (key in params) newParams[key] = params[key]
-//   }
+  for (const key of keys) {
+    if (key in params) newParams[key] = params[key]
+  }
 
-//   return newParams
-// }
+  return newParams
+}
 
 /**
  * Normalizes a RouteRecordRaw. Creates a copy

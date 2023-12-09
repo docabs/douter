@@ -38,25 +38,25 @@ export enum NavigationType {
   push = 'push',
 }
 
-// export enum NavigationDirection {
-//   back = 'back',
-//   forward = 'forward',
-//   unknown = '',
-// }
+export enum NavigationDirection {
+  back = 'back',
+  forward = 'forward',
+  unknown = '',
+}
 
-// export interface NavigationInformation {
-//   type: NavigationType
-//   direction: NavigationDirection
-//   delta: number
-// }
+export interface NavigationInformation {
+  type: NavigationType
+  direction: NavigationDirection
+  delta: number
+}
 
-// export interface NavigationCallback {
-//   (
-//     to: HistoryLocation,
-//     from: HistoryLocation,
-//     information: NavigationInformation
-//   ): void
-// }
+export interface NavigationCallback {
+  (
+    to: HistoryLocation,
+    from: HistoryLocation,
+    information: NavigationInformation
+  ): void
+}
 
 /**
  * Starting location for Histories
@@ -78,10 +78,10 @@ export interface RouterHistory {
    * `/sub-folder`
    */
   readonly base: string
-  //   /**
-  //    * Current History location
-  //    */
-  //   readonly location: HistoryLocation
+  /**
+   * Current History location
+   */
+  readonly location: HistoryLocation
   //   /**
   //    * Current History state
   //    */
@@ -123,16 +123,16 @@ export interface RouterHistory {
   //    */
   //   go(delta: number, triggerListeners?: boolean): void
 
-  //   /**
-  //    * Attach a listener to the History implementation that is triggered when the
-  //    * navigation is triggered from outside (like the Browser back and forward
-  //    * buttons) or when passing `true` to {@link RouterHistory.back} and
-  //    * {@link RouterHistory.forward}
-  //    *
-  //    * @param callback - listener to attach
-  //    * @returns a callback to remove the listener
-  //    */
-  //   listen(callback: NavigationCallback): () => void
+  /**
+   * Attach a listener to the History implementation that is triggered when the
+   * navigation is triggered from outside (like the Browser back and forward
+   * buttons) or when passing `true` to {@link RouterHistory.back} and
+   * {@link RouterHistory.forward}
+   *
+   * @param callback - listener to attach
+   * @returns a callback to remove the listener
+   */
+  listen(callback: NavigationCallback): () => void
 
   /**
    * Generates the corresponding href to be used in an anchor tag.

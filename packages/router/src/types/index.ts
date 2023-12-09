@@ -8,7 +8,7 @@ import {
 } from 'docuejs'
 import { RouteRecord, RouteRecordNormalized } from '../matcher/types'
 import { HistoryState } from '../history/common'
-// import { NavigationFailure } from '../errors'
+import { NavigationFailure } from '../errors'
 
 export type Lazy<T> = () => Promise<T>
 // export type Override<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U
@@ -525,13 +525,13 @@ export interface NavigationGuardWithThis<T> {
   ): NavigationGuardReturn | Promise<NavigationGuardReturn>
 }
 
-// export interface NavigationHookAfter {
-//   (
-//     to: RouteLocationNormalized,
-//     from: RouteLocationNormalized,
-//     failure?: NavigationFailure | void
-//   ): any
-// }
+export interface NavigationHookAfter {
+  (
+    to: RouteLocationNormalized,
+    from: RouteLocationNormalized,
+    failure?: NavigationFailure | void
+  ): any
+}
 
 export * from './typeGuards'
 

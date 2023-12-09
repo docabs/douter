@@ -76,36 +76,36 @@ export function encodeHash(text: string): string {
     .replace(ENC_CARET_RE, '^')
 }
 
-// /**
-//  * Encode characters that need to be encoded query values on the query
-//  * section of the URL.
-//  *
-//  * @param text - string to encode
-//  * @returns encoded string
-//  */
-// export function encodeQueryValue(text: string | number): string {
-//   return (
-//     commonEncode(text)
-//       // Encode the space as +, encode the + to differentiate it from the space
-//       .replace(PLUS_RE, '%2B')
-//       .replace(ENC_SPACE_RE, '+')
-//       .replace(HASH_RE, '%23')
-//       .replace(AMPERSAND_RE, '%26')
-//       .replace(ENC_BACKTICK_RE, '`')
-//       .replace(ENC_CURLY_OPEN_RE, '{')
-//       .replace(ENC_CURLY_CLOSE_RE, '}')
-//       .replace(ENC_CARET_RE, '^')
-//   )
-// }
+/**
+ * Encode characters that need to be encoded query values on the query
+ * section of the URL.
+ *
+ * @param text - string to encode
+ * @returns encoded string
+ */
+export function encodeQueryValue(text: string | number): string {
+  return (
+    commonEncode(text)
+      // Encode the space as +, encode the + to differentiate it from the space
+      .replace(PLUS_RE, '%2B')
+      .replace(ENC_SPACE_RE, '+')
+      .replace(HASH_RE, '%23')
+      .replace(AMPERSAND_RE, '%26')
+      .replace(ENC_BACKTICK_RE, '`')
+      .replace(ENC_CURLY_OPEN_RE, '{')
+      .replace(ENC_CURLY_CLOSE_RE, '}')
+      .replace(ENC_CARET_RE, '^')
+  )
+}
 
-// /**
-//  * Like `encodeQueryValue` but also encodes the `=` character.
-//  *
-//  * @param text - string to encode
-//  */
-// export function encodeQueryKey(text: string | number): string {
-//   return encodeQueryValue(text).replace(EQUAL_RE, '%3D')
-// }
+/**
+ * Like `encodeQueryValue` but also encodes the `=` character.
+ *
+ * @param text - string to encode
+ */
+export function encodeQueryKey(text: string | number): string {
+  return encodeQueryValue(text).replace(EQUAL_RE, '%3D')
+}
 
 /**
  * Encode characters that need to be encoded on the path section of the URL.

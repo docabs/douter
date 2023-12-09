@@ -68,11 +68,11 @@ export type ScrollPosition = ScrollPositionCoordinates | ScrollPositionElement
 //   }
 // }
 
-// export const computeScrollPosition = () =>
-//   ({
-//     left: window.pageXOffset,
-//     top: window.pageYOffset,
-//   } as _ScrollPositionNormalized)
+export const computeScrollPosition = () =>
+  ({
+    left: window.pageXOffset,
+    top: window.pageYOffset,
+  } as _ScrollPositionNormalized)
 
 // export function scrollToPosition(position: ScrollPosition): void {
 //   let scrollToOptions: ScrollPositionCoordinates

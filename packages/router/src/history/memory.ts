@@ -1,6 +1,6 @@
 import {
   RouterHistory,
-  // NavigationCallback,
+  NavigationCallback,
   START,
   HistoryState,
   // NavigationType,
@@ -19,7 +19,7 @@ import {
 //  * @returns a history object that can be passed to the router constructor
 //  */
 export function createMemoryHistory(base: string = ''): RouterHistory {
-  //   let listeners: NavigationCallback[] = []
+  let listeners: NavigationCallback[] = []
   let queue: HistoryLocation[] = [START]
   let position: number = 0
   base = normalizeBase(base)
@@ -49,8 +49,8 @@ export function createMemoryHistory(base: string = ''): RouterHistory {
   //   }
 
   const routerHistory: RouterHistory = {
-    //     // rewritten by Object.defineProperty
-    //     location: START,
+    // rewritten by Object.defineProperty
+    location: START,
     //     // TODO: should be kept in queue
     //     state: {},
     base,
@@ -63,13 +63,13 @@ export function createMemoryHistory(base: string = ''): RouterHistory {
     push(to, data?: HistoryState) {
       setLocation(to)
     },
-    //     listen(callback) {
-    //       listeners.push(callback)
-    //       return () => {
-    //         const index = listeners.indexOf(callback)
-    //         if (index > -1) listeners.splice(index, 1)
-    //       }
-    //     },
+    listen(callback) {
+      listeners.push(callback)
+      return () => {
+        const index = listeners.indexOf(callback)
+        if (index > -1) listeners.splice(index, 1)
+      }
+    },
     //     destroy() {
     //       listeners = []
     //       queue = [START]
@@ -92,10 +92,10 @@ export function createMemoryHistory(base: string = ''): RouterHistory {
     //     },
   }
 
-  //   Object.defineProperty(routerHistory, 'location', {
-  //     enumerable: true,
-  //     get: () => queue[position],
-  //   })
+  Object.defineProperty(routerHistory, 'location', {
+    enumerable: true,
+    get: () => queue[position],
+  })
 
   //   if (__TEST__) {
   //     // @ts-expect-error: only for tests

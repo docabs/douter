@@ -11,18 +11,23 @@ import {
   RawRouteComponent,
 } from './types'
 
-// import {
-//   createRouterError,
-//   ErrorTypes,
-//   NavigationFailure,
-//   NavigationRedirectError,
-// } from './errors'
-// import { ComponentOptions, onUnmounted, onActivated, onDeactivated } from 'docue'
-// import { inject, getCurrentInstance } from 'docue'
+import {
+  createRouterError,
+  ErrorTypes,
+  NavigationFailure,
+  NavigationRedirectError,
+} from './errors'
+import {
+  ComponentOptions,
+  onUnmounted,
+  onActivated,
+  onDeactivated,
+} from 'docuejs'
+import { inject, getCurrentInstance } from 'docuejs'
 // import { matchedRouteKey } from './injectionSymbols'
 import { RouteRecordNormalized } from './matcher/types'
 // import { isESModule } from './utils'
-// import { warn } from './warning'
+import { warn } from './warning'
 
 // function registerGuard(
 //   record: RouteRecordNormalized,
@@ -126,50 +131,50 @@ export function guardToPromiseFn(
   record?: RouteRecordNormalized,
   name?: string
 ): () => Promise<void> {
-  //   // keep a reference to the enterCallbackArray to prevent pushing callbacks if a new navigation took place
-  //   const enterCallbackArray =
-  //     record &&
-  //     // name is defined if record is because of the function overload
-  //     (record.enterCallbacks[name!] = record.enterCallbacks[name!] || [])
+  // keep a reference to the enterCallbackArray to prevent pushing callbacks if a new navigation took place
+  const enterCallbackArray =
+    record &&
+    // name is defined if record is because of the function overload
+    (record.enterCallbacks[name!] = record.enterCallbacks[name!] || [])
 
   return () =>
     new Promise((resolve, reject) => {
       const next: NavigationGuardNext = (
         valid?: boolean | RouteLocationRaw | NavigationGuardNextCallback | Error
       ) => {
-        //         if (valid === false) {
-        //           reject(
-        //             createRouterError<NavigationFailure>(
-        //               ErrorTypes.NAVIGATION_ABORTED,
-        //               {
-        //                 from,
-        //                 to,
-        //               }
-        //             )
-        //           )
-        //         } else if (valid instanceof Error) {
-        //           reject(valid)
-        //         } else if (isRouteLocation(valid)) {
-        //           reject(
-        //             createRouterError<NavigationRedirectError>(
-        //               ErrorTypes.NAVIGATION_GUARD_REDIRECT,
-        //               {
-        //                 from: to,
-        //                 to: valid,
-        //               }
-        //             )
-        //           )
-        //         } else {
-        //           if (
-        //             enterCallbackArray &&
-        //             // since enterCallbackArray is truthy, both record and name also are
-        //             record!.enterCallbacks[name!] === enterCallbackArray &&
-        //             typeof valid === 'function'
-        //           ) {
-        //             enterCallbackArray.push(valid)
-        //           }
-        //           resolve()
-        //         }
+        if (valid === false) {
+          reject(
+            createRouterError<NavigationFailure>(
+              ErrorTypes.NAVIGATION_ABORTED,
+              {
+                from,
+                to,
+              }
+            )
+          )
+        } else if (valid instanceof Error) {
+          reject(valid)
+        } else if (isRouteLocation(valid)) {
+          reject(
+            createRouterError<NavigationRedirectError>(
+              ErrorTypes.NAVIGATION_GUARD_REDIRECT,
+              {
+                from: to,
+                to: valid,
+              }
+            )
+          )
+        } else {
+          if (
+            enterCallbackArray &&
+            // since enterCallbackArray is truthy, both record and name also are
+            record!.enterCallbacks[name!] === enterCallbackArray &&
+            typeof valid === 'function'
+          ) {
+            enterCallbackArray.push(valid)
+          }
+          resolve()
+        }
       }
 
       // wrapping with Promise.resolve allows it to work with both async and sync guards
@@ -181,29 +186,29 @@ export function guardToPromiseFn(
       )
       let guardCall = Promise.resolve(guardReturn)
 
-      //       if (guard.length < 3) guardCall = guardCall.then(next)
-      //       if (__DEV__ && guard.length > 2) {
-      //         const message = `The "next" callback was never called inside of ${
-      //           guard.name ? '"' + guard.name + '"' : ''
-      //         }:\n${guard.toString()}\n. If you are returning a value instead of calling "next", make sure to remove the "next" parameter from your function.`
-      //         if (typeof guardReturn === 'object' && 'then' in guardReturn) {
-      //           guardCall = guardCall.then(resolvedValue => {
-      //             // @ts-expect-error: _called is added at canOnlyBeCalledOnce
-      //             if (!next._called) {
-      //               warn(message)
-      //               return Promise.reject(new Error('Invalid navigation guard'))
-      //             }
-      //             return resolvedValue
-      //           })
-      //         } else if (guardReturn !== undefined) {
-      //           // @ts-expect-error: _called is added at canOnlyBeCalledOnce
-      //           if (!next._called) {
-      //             warn(message)
-      //             reject(new Error('Invalid navigation guard'))
-      //             return
-      //           }
-      //         }
+      if (guard.length < 3) guardCall = guardCall.then(next)
+      // if (__DEV__ && guard.length > 2) {
+      //   const message = `The "next" callback was never called inside of ${
+      //     guard.name ? '"' + guard.name + '"' : ''
+      //   }:\n${guard.toString()}\n. If you are returning a value instead of calling "next", make sure to remove the "next" parameter from your function.`
+      //   if (typeof guardReturn === 'object' && 'then' in guardReturn) {
+      //     guardCall = guardCall.then(resolvedValue => {
+      //       // @ts-expect-error: _called is added at canOnlyBeCalledOnce
+      //       if (!next._called) {
+      //         warn(message)
+      //         return Promise.reject(new Error('Invalid navigation guard'))
       //       }
+      //       return resolvedValue
+      //     })
+      //   } else if (guardReturn !== undefined) {
+      //     // @ts-expect-error: _called is added at canOnlyBeCalledOnce
+      //     if (!next._called) {
+      //       warn(message)
+      //       reject(new Error('Invalid navigation guard'))
+      //       return
+      //     }
+      //   }
+      // }
       guardCall.catch(err => reject(err))
     })
 }
@@ -213,15 +218,15 @@ function canOnlyBeCalledOnce(
   to: RouteLocationNormalized,
   from: RouteLocationNormalized
 ): NavigationGuardNext {
-  //   let called = 0
+  let called = 0
   return function () {
-    //     if (called++ === 1)
-    //       warn(
-    //         `The "next" callback was called more than once in one navigation guard when going from "${from.fullPath}" to "${to.fullPath}". It should be called exactly one time in each navigation guard. This will fail in production.`
-    //       )
-    //     // @ts-expect-error: we put it in the original one because it's easier to check
-    //     next._called = true
-    //     if (called === 1) next.apply(null, arguments as any)
+    if (called++ === 1)
+      warn(
+        `The "next" callback was called more than once in one navigation guard when going from "${from.fullPath}" to "${to.fullPath}". It should be called exactly one time in each navigation guard. This will fail in production.`
+      )
+    // @ts-expect-error: we put it in the original one because it's easier to check
+    next._called = true
+    if (called === 1) next.apply(null, arguments as any)
   }
 }
 
@@ -284,72 +289,72 @@ export function extractComponentsGuards(
       //         }
       //       }
 
-      //       // skip update and leave guards if the route component is not mounted
-      //       if (guardType !== 'beforeRouteEnter' && !record.instances[name]) continue
+      // skip update and leave guards if the route component is not mounted
+      if (guardType !== 'beforeRouteEnter' && !record.instances[name]) continue
 
-      //       if (isRouteComponent(rawComponent)) {
-      //         // __vccOpts is added by docue-class-component and contain the regular options
-      //         const options: ComponentOptions =
-      //           (rawComponent as any).__vccOpts || rawComponent
-      //         const guard = options[guardType]
-      //         guard && guards.push(guardToPromiseFn(guard, to, from, record, name))
-      //       } else {
-      //         // start requesting the chunk already
-      //         let componentPromise: Promise<
-      //           RouteComponent | null | undefined | void
-      //         > = (rawComponent as Lazy<RouteComponent>)()
+      if (isRouteComponent(rawComponent)) {
+        // __vccOpts is added by docue-class-component and contain the regular options
+        const options: ComponentOptions =
+          (rawComponent as any).__vccOpts || rawComponent
+        const guard = options[guardType]
+        guard && guards.push(guardToPromiseFn(guard, to, from, record, name))
+      } else {
+        // start requesting the chunk already
+        let componentPromise: Promise<
+          RouteComponent | null | undefined | void
+        > = (rawComponent as Lazy<RouteComponent>)()
 
-      //         if (__DEV__ && !('catch' in componentPromise)) {
-      //           warn(
-      //             `Component "${name}" in record with path "${record.path}" is a function that does not return a Promise. If you were passing a functional component, make sure to add a "displayName" to the component. This will break in production if not fixed.`
-      //           )
-      //           componentPromise = Promise.resolve(componentPromise as RouteComponent)
-      //         }
+        //         if (__DEV__ && !('catch' in componentPromise)) {
+        //           warn(
+        //             `Component "${name}" in record with path "${record.path}" is a function that does not return a Promise. If you were passing a functional component, make sure to add a "displayName" to the component. This will break in production if not fixed.`
+        //           )
+        //           componentPromise = Promise.resolve(componentPromise as RouteComponent)
+        //         }
 
-      //         guards.push(() =>
-      //           componentPromise.then(resolved => {
-      //             if (!resolved)
-      //               return Promise.reject(
-      //                 new Error(
-      //                   `Couldn't resolve component "${name}" at "${record.path}"`
-      //                 )
-      //               )
-      //             const resolvedComponent = isESModule(resolved)
-      //               ? resolved.default
-      //               : resolved
-      //             // replace the function with the resolved component
-      //             // cannot be null or undefined because we went into the for loop
-      //             record.components![name] = resolvedComponent
-      //             // __vccOpts is added by docue-class-component and contain the regular options
-      //             const options: ComponentOptions =
-      //               (resolvedComponent as any).__vccOpts || resolvedComponent
-      //             const guard = options[guardType]
-      //             return guard && guardToPromiseFn(guard, to, from, record, name)()
-      //           })
-      //         )
-      //       }
+        guards.push(() =>
+          componentPromise.then(resolved => {
+            //             if (!resolved)
+            //               return Promise.reject(
+            //                 new Error(
+            //                   `Couldn't resolve component "${name}" at "${record.path}"`
+            //                 )
+            //               )
+            //             const resolvedComponent = isESModule(resolved)
+            //               ? resolved.default
+            //               : resolved
+            //             // replace the function with the resolved component
+            //             // cannot be null or undefined because we went into the for loop
+            //             record.components![name] = resolvedComponent
+            //             // __vccOpts is added by docue-class-component and contain the regular options
+            //             const options: ComponentOptions =
+            //               (resolvedComponent as any).__vccOpts || resolvedComponent
+            //             const guard = options[guardType]
+            //             return guard && guardToPromiseFn(guard, to, from, record, name)()
+          })
+        )
+      }
     }
   }
 
   return guards
 }
 
-// /**
-//  * Allows differentiating lazy components from functional components and docue-class-component
-//  * @internal
-//  *
-//  * @param component
-//  */
-// export function isRouteComponent(
-//   component: RawRouteComponent
-// ): component is RouteComponent {
-//   return (
-//     typeof component === 'object' ||
-//     'displayName' in component ||
-//     'props' in component ||
-//     '__vccOpts' in component
-//   )
-// }
+/**
+ * Allows differentiating lazy components from functional components and docue-class-component
+ * @internal
+ *
+ * @param component
+ */
+export function isRouteComponent(
+  component: RawRouteComponent
+): component is RouteComponent {
+  return (
+    typeof component === 'object' ||
+    'displayName' in component ||
+    'props' in component ||
+    '__vccOpts' in component
+  )
+}
 
 // /**
 //  * Ensures a route is loaded, so it can be passed as o prop to `<RouterView>`.

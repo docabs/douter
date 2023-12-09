@@ -1,5 +1,5 @@
-// import { decode, encodeQueryKey, encodeQueryValue, PLUS_RE } from './encoding'
-// import { isArray } from './utils'
+import { decode, encodeQueryKey, encodeQueryValue, PLUS_RE } from './encoding'
+import { isArray } from './utils'
 
 /**
  * Possible values in normalized {@link LocationQuery}. `null` renders the query
@@ -53,31 +53,31 @@ export type LocationQueryRaw = Record<
  */
 export function parseQuery(search: string): LocationQuery {
   const query: LocationQuery = {}
-//   // avoid creating an object with an empty key and empty value
-//   // because of split('&')
-//   if (search === '' || search === '?') return query
-//   const hasLeadingIM = search[0] === '?'
-//   const searchParams = (hasLeadingIM ? search.slice(1) : search).split('&')
-//   for (let i = 0; i < searchParams.length; ++i) {
-//     // pre decode the + into space
-//     const searchParam = searchParams[i].replace(PLUS_RE, ' ')
-//     // allow the = character
-//     const eqPos = searchParam.indexOf('=')
-//     const key = decode(eqPos < 0 ? searchParam : searchParam.slice(0, eqPos))
-//     const value = eqPos < 0 ? null : decode(searchParam.slice(eqPos + 1))
+  // avoid creating an object with an empty key and empty value
+  // because of split('&')
+  if (search === '' || search === '?') return query
+  const hasLeadingIM = search[0] === '?'
+  const searchParams = (hasLeadingIM ? search.slice(1) : search).split('&')
+  for (let i = 0; i < searchParams.length; ++i) {
+    // pre decode the + into space
+    const searchParam = searchParams[i].replace(PLUS_RE, ' ')
+    // allow the = character
+    const eqPos = searchParam.indexOf('=')
+    const key = decode(eqPos < 0 ? searchParam : searchParam.slice(0, eqPos))
+    const value = eqPos < 0 ? null : decode(searchParam.slice(eqPos + 1))
 
-//     if (key in query) {
-//       // an extra variable for ts types
-//       let currentValue = query[key]
-//       if (!isArray(currentValue)) {
-//         currentValue = query[key] = [currentValue]
-//       }
-//       // we force the modification
-//       ;(currentValue as LocationQueryValue[]).push(value)
-//     } else {
-//       query[key] = value
-//     }
-//   }
+    if (key in query) {
+      // an extra variable for ts types
+      let currentValue = query[key]
+      if (!isArray(currentValue)) {
+        currentValue = query[key] = [currentValue]
+      }
+      // we force the modification
+      ;(currentValue as LocationQueryValue[]).push(value)
+    } else {
+      query[key] = value
+    }
+  }
   return query
 }
 
@@ -92,31 +92,31 @@ export function parseQuery(search: string): LocationQuery {
  */
 export function stringifyQuery(query: LocationQueryRaw): string {
   let search = ''
-//   for (let key in query) {
-//     const value = query[key]
-//     key = encodeQueryKey(key)
-//     if (value == null) {
-//       // only null adds the value
-//       if (value !== undefined) {
-//         search += (search.length ? '&' : '') + key
-//       }
-//       continue
-//     }
-//     // keep null values
-//     const values: LocationQueryValueRaw[] = isArray(value)
-//       ? value.map(v => v && encodeQueryValue(v))
-//       : [value && encodeQueryValue(value)]
+  for (let key in query) {
+    const value = query[key]
+    key = encodeQueryKey(key)
+    if (value == null) {
+      // only null adds the value
+      if (value !== undefined) {
+        search += (search.length ? '&' : '') + key
+      }
+      continue
+    }
+    // keep null values
+    const values: LocationQueryValueRaw[] = isArray(value)
+      ? value.map(v => v && encodeQueryValue(v))
+      : [value && encodeQueryValue(value)]
 
-//     values.forEach(value => {
-//       // skip undefined values in arrays as if they were not present
-//       // smaller code than using filter
-//       if (value !== undefined) {
-//         // only append & with non-empty search
-//         search += (search.length ? '&' : '') + key
-//         if (value != null) search += '=' + value
-//       }
-//     })
-//   }
+    values.forEach(value => {
+      // skip undefined values in arrays as if they were not present
+      // smaller code than using filter
+      if (value !== undefined) {
+        // only append & with non-empty search
+        search += (search.length ? '&' : '') + key
+        if (value != null) search += '=' + value
+      }
+    })
+  }
 
   return search
 }

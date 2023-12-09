@@ -12,7 +12,7 @@
       "args": [
         "--runInBand"
       ],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/packages/router",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true

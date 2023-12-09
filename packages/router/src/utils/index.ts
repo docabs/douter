@@ -19,12 +19,12 @@ export function applyToParams(
 ): RouteParams {
   const newParams: RouteParams = {}
 
-//   for (const key in params) {
-//     const value = params[key]
-//     newParams[key] = isArray(value)
-//       ? value.map(fn)
-//       : fn(value as Exclude<RouteParamValueRaw, any[]>)
-//   }
+  for (const key in params) {
+    const value = params[key]
+    newParams[key] = isArray(value)
+      ? value.map(fn)
+      : fn(value as Exclude<RouteParamValueRaw, any[]>)
+  }
 
   return newParams
 }

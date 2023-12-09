@@ -56,26 +56,26 @@ export function parseURL(
   // TODO: move to new URL()
   const hashPos = location.indexOf('#')
   let searchPos = location.indexOf('?')
-  //   // the hash appears before the search, so it's not part of the search string
-  //   if (hashPos < searchPos && hashPos >= 0) {
-  //     searchPos = -1
-  //   }
+  // the hash appears before the search, so it's not part of the search string
+  if (hashPos < searchPos && hashPos >= 0) {
+    searchPos = -1
+  }
 
-  //   if (searchPos > -1) {
-  //     path = location.slice(0, searchPos)
-  //     searchString = location.slice(
-  //       searchPos + 1,
-  //       hashPos > -1 ? hashPos : location.length
-  //     )
+  if (searchPos > -1) {
+    path = location.slice(0, searchPos)
+    searchString = location.slice(
+      searchPos + 1,
+      hashPos > -1 ? hashPos : location.length
+    )
 
-  //     query = parseQuery(searchString)
-  //   }
+    query = parseQuery(searchString)
+  }
 
-  // if (hashPos > -1) {
-  //   path = path || location.slice(0, hashPos)
-  //   // keep the # character
-  //   hash = location.slice(hashPos, location.length)
-  // }
+  if (hashPos > -1) {
+    path = path || location.slice(0, hashPos)
+    // keep the # character
+    hash = location.slice(hashPos, location.length)
+  }
 
   // no search and no query
   path = resolveRelativePath(path != null ? path : location, currentLocation)
@@ -103,18 +103,18 @@ export function stringifyURL(
   return location.path + (query && '?') + query + (location.hash || '')
 }
 
-// /**
-//  * Strips off the base from the beginning of a location.pathname in a non-case-sensitive way.
-//  *
-//  * @param pathname - location.pathname
-//  * @param base - base to strip off
-//  */
-// export function stripBase(pathname: string, base: string): string {
-//   // no base or base is not found at the beginning
-//   if (!base || !pathname.toLowerCase().startsWith(base.toLowerCase()))
-//     return pathname
-//   return pathname.slice(base.length) || '/'
-// }
+/**
+ * Strips off the base from the beginning of a location.pathname in a non-case-sensitive way.
+ *
+ * @param pathname - location.pathname
+ * @param base - base to strip off
+ */
+export function stripBase(pathname: string, base: string): string {
+  // no base or base is not found at the beginning
+  if (!base || !pathname.toLowerCase().startsWith(base.toLowerCase()))
+    return pathname
+  return pathname.slice(base.length) || '/'
+}
 
 /**
  * Checks if two RouteLocation are equal. This means that both locations are

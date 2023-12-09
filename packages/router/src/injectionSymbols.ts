@@ -1,7 +1,7 @@
 import type { InjectionKey, ComputedRef, Ref } from 'docuejs'
 import { RouteLocationNormalizedLoaded } from './types'
 import { RouteRecordNormalized } from './matcher/types'
-// import type { Router } from './router'
+import type { Router } from './router'
 
 /**
  * RouteRecord being rendered by the closest ancestor Router View. Used for
@@ -24,23 +24,23 @@ export const viewDepthKey = Symbol(
   __DEV__ ? 'router view depth' : ''
 ) as InjectionKey<Ref<number> | number>
 
-// /**
-//  * Allows overriding the router instance returned by `useRouter` in tests. r
-//  * stands for router
-//  *
-//  * @internal
-//  */
-// export const routerKey = Symbol(__DEV__ ? 'router' : '') as InjectionKey<Router>
+/**
+ * Allows overriding the router instance returned by `useRouter` in tests. r
+ * stands for router
+ *
+ * @internal
+ */
+export const routerKey = Symbol(__DEV__ ? 'router' : '') as InjectionKey<Router>
 
-// /**
-//  * Allows overriding the current route returned by `useRoute` in tests. rl
-//  * stands for route location
-//  *
-//  * @internal
-//  */
-// export const routeLocationKey = Symbol(
-//   __DEV__ ? 'route location' : ''
-// ) as InjectionKey<RouteLocationNormalizedLoaded>
+/**
+ * Allows overriding the current route returned by `useRoute` in tests. rl
+ * stands for route location
+ *
+ * @internal
+ */
+export const routeLocationKey = Symbol(
+  __DEV__ ? 'route location' : ''
+) as InjectionKey<RouteLocationNormalizedLoaded>
 
 /**
  * Allows overriding the current route used by router-view. Internally this is

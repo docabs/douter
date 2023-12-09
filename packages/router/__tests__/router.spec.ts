@@ -1,11 +1,11 @@
-// import fakePromise from 'faked-promise'
+import fakePromise from 'faked-promise'
 import {
   createRouter,
   createMemoryHistory,
-  // createWebHistory,
-  // createWebHashHistory,
+  createWebHistory,
+  createWebHashHistory,
 } from '../src'
-// import { NavigationFailureType } from '../src/errors'
+import { NavigationFailureType } from '../src/errors'
 import { createDom, components, tick, nextNavigation } from './utils'
 import {
   RouteRecordRaw,
@@ -150,218 +150,218 @@ describe('Router', () => {
       expect(history.replace).toHaveBeenCalledWith('/', expect.anything())
     })
 
-  //   it('replaces if a guard redirect replaces', async () => {
-  //     const history = createMemoryHistory()
-  //     const { router } = await newRouter({ history })
-  //     // move somewhere else
-  //     router.beforeEach(to => {
-  //       if (to.name !== 'Foo') {
-  //         return { name: 'Foo', replace: true }
-  //       }
-  //       return // no warn
-  //     })
-  //     jest.spyOn(history, 'replace')
-  //     jest.spyOn(history, 'push')
-  //     await router.push('/search')
-  //     expect(history.location).toBe('/foo')
-  //     expect(history.push).toHaveBeenCalledTimes(0)
-  //     expect(history.replace).toHaveBeenCalledTimes(1)
-  //     expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
-  //   })
+    it('replaces if a guard redirect replaces', async () => {
+      const history = createMemoryHistory()
+      const { router } = await newRouter({ history })
+      // move somewhere else
+      router.beforeEach(to => {
+        if (to.name !== 'Foo') {
+          return { name: 'Foo', replace: true }
+        }
+        return // no warn
+      })
+      jest.spyOn(history, 'replace')
+      jest.spyOn(history, 'push')
+      await router.push('/search')
+      expect(history.location).toBe('/foo')
+      expect(history.push).toHaveBeenCalledTimes(0)
+      expect(history.replace).toHaveBeenCalledTimes(1)
+      expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
+    })
 
-  //   it('allows to customize parseQuery', async () => {
-  //     const parseQuery = jest.fn(_ => ({}))
-  //     const { router } = await newRouter({ parseQuery })
-  //     const to = router.resolve('/foo?bar=baz')
-  //     expect(parseQuery).toHaveBeenCalledWith('bar=baz')
-  //     expect(to.query).toEqual({})
-  //   })
+    it('allows to customize parseQuery', async () => {
+      const parseQuery = jest.fn(_ => ({}))
+      const { router } = await newRouter({ parseQuery })
+      const to = router.resolve('/foo?bar=baz')
+      expect(parseQuery).toHaveBeenCalledWith('bar=baz')
+      expect(to.query).toEqual({})
+    })
 
-  //   it('allows to customize stringifyQuery', async () => {
-  //     const stringifyQuery = jest.fn(_ => '')
-  //     const { router } = await newRouter({ stringifyQuery })
-  //     const to = router.resolve({ query: { foo: 'bar' } })
-  //     expect(stringifyQuery).toHaveBeenCalledWith({ foo: 'bar' })
-  //     expect(to.query).toEqual({ foo: 'bar' })
-  //     expect(to.fullPath).toBe('/')
-  //   })
+    it('allows to customize stringifyQuery', async () => {
+      const stringifyQuery = jest.fn(_ => '')
+      const { router } = await newRouter({ stringifyQuery })
+      const to = router.resolve({ query: { foo: 'bar' } })
+      expect(stringifyQuery).toHaveBeenCalledWith({ foo: 'bar' })
+      expect(to.query).toEqual({ foo: 'bar' })
+      expect(to.fullPath).toBe('/')
+    })
 
-  //   it('creates an empty query with no query', async () => {
-  //     const stringifyQuery = jest.fn(_ => '')
-  //     const { router } = await newRouter({ stringifyQuery })
-  //     const to = router.resolve({ hash: '#a' })
-  //     expect(stringifyQuery).not.toHaveBeenCalled()
-  //     expect(to.query).toEqual({})
-  //   })
+    it('creates an empty query with no query', async () => {
+      const stringifyQuery = jest.fn(_ => '')
+      const { router } = await newRouter({ stringifyQuery })
+      const to = router.resolve({ hash: '#a' })
+      expect(stringifyQuery).not.toHaveBeenCalled()
+      expect(to.query).toEqual({})
+    })
 
-  //   it('merges meta properties from parent to child', async () => {
-  //     const { router } = await newRouter()
-  //     expect(router.resolve('/parent')).toMatchObject({
-  //       meta: { fromParent: 'foo' },
-  //     })
-  //     expect(router.resolve('/parent/child')).toMatchObject({
-  //       meta: { fromParent: 'foo', fromChild: 'bar' },
-  //     })
-  //   })
+    it('merges meta properties from parent to child', async () => {
+      const { router } = await newRouter()
+      expect(router.resolve('/parent')).toMatchObject({
+        meta: { fromParent: 'foo' },
+      })
+      expect(router.resolve('/parent/child')).toMatchObject({
+        meta: { fromParent: 'foo', fromChild: 'bar' },
+      })
+    })
 
-  //   it('merges meta properties from component-less route records', async () => {
-  //     const { router } = await newRouter()
-  //     router.addRoute({
-  //       meta: { parent: true },
-  //       path: '/app',
-  //       children: [
-  //         { path: '', component: components.Foo, meta: { child: true } },
-  //         {
-  //           path: 'nested',
-  //           component: components.Foo,
-  //           children: [
-  //             { path: 'a', children: [{ path: 'b', component: components.Foo }] },
-  //           ],
-  //         },
-  //       ],
-  //     })
-  //     expect(router.resolve('/app')).toMatchObject({
-  //       meta: { parent: true, child: true },
-  //     })
-  //     expect(router.resolve('/app/nested/a/b')).toMatchObject({
-  //       meta: { parent: true },
-  //     })
-  //   })
+    it('merges meta properties from component-less route records', async () => {
+      const { router } = await newRouter()
+      router.addRoute({
+        meta: { parent: true },
+        path: '/app',
+        children: [
+          { path: '', component: components.Foo, meta: { child: true } },
+          {
+            path: 'nested',
+            component: components.Foo,
+            children: [
+              { path: 'a', children: [{ path: 'b', component: components.Foo }] },
+            ],
+          },
+        ],
+      })
+      expect(router.resolve('/app')).toMatchObject({
+        meta: { parent: true, child: true },
+      })
+      expect(router.resolve('/app/nested/a/b')).toMatchObject({
+        meta: { parent: true },
+      })
+    })
 
-  //   it('can do initial navigation to /', async () => {
-  //     const router = createRouter({
-  //       history: createMemoryHistory(),
-  //       routes: [{ path: '/', component: components.Home }],
-  //     })
-  //     expect(router.currentRoute.value).toBe(START_LOCATION_NORMALIZED)
-  //     await router.push('/')
-  //     expect(router.currentRoute.value).not.toBe(START_LOCATION_NORMALIZED)
-  //   })
+    it('can do initial navigation to /', async () => {
+      const router = createRouter({
+        history: createMemoryHistory(),
+        routes: [{ path: '/', component: components.Home }],
+      })
+      expect(router.currentRoute.value).toBe(START_LOCATION_NORMALIZED)
+      await router.push('/')
+      expect(router.currentRoute.value).not.toBe(START_LOCATION_NORMALIZED)
+    })
 
-  //   it('resolves hash history as a relative hash link', async () => {
-  //     let history = createWebHashHistory()
-  //     let { router } = await newRouter({ history })
-  //     expect(router.resolve('/foo?bar=baz#hey')).toMatchObject({
-  //       fullPath: '/foo?bar=baz#hey',
-  //       href: '#/foo?bar=baz#hey',
-  //     })
-  //     history = createWebHashHistory('/with/base/')
-  //     ;({ router } = await newRouter({ history }))
-  //     expect(router.resolve('/foo?bar=baz#hey')).toMatchObject({
-  //       fullPath: '/foo?bar=baz#hey',
-  //       href: '#/foo?bar=baz#hey',
-  //     })
-  //   })
+    it('resolves hash history as a relative hash link', async () => {
+      let history = createWebHashHistory()
+      let { router } = await newRouter({ history })
+      expect(router.resolve('/foo?bar=baz#hey')).toMatchObject({
+        fullPath: '/foo?bar=baz#hey',
+        href: '#/foo?bar=baz#hey',
+      })
+      history = createWebHashHistory('/with/base/')
+      ;({ router } = await newRouter({ history }))
+      expect(router.resolve('/foo?bar=baz#hey')).toMatchObject({
+        fullPath: '/foo?bar=baz#hey',
+        href: '#/foo?bar=baz#hey',
+      })
+    })
 
-  //   it('can pass replace option to push', async () => {
-  //     const { router, history } = await newRouter()
-  //     jest.spyOn(history, 'replace')
-  //     await router.push({ path: '/foo', replace: true })
-  //     expect(history.replace).toHaveBeenCalledTimes(1)
-  //     expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
-  //   })
+    it('can pass replace option to push', async () => {
+      const { router, history } = await newRouter()
+      jest.spyOn(history, 'replace')
+      await router.push({ path: '/foo', replace: true })
+      expect(history.replace).toHaveBeenCalledTimes(1)
+      expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
+    })
 
-  //   it('can replaces current location with a string location', async () => {
-  //     const { router, history } = await newRouter()
-  //     jest.spyOn(history, 'replace')
-  //     await router.replace('/foo')
-  //     expect(history.replace).toHaveBeenCalledTimes(1)
-  //     expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
-  //   })
+    it('can replaces current location with a string location', async () => {
+      const { router, history } = await newRouter()
+      jest.spyOn(history, 'replace')
+      await router.replace('/foo')
+      expect(history.replace).toHaveBeenCalledTimes(1)
+      expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
+    })
 
-  //   it('can replaces current location with an object location', async () => {
-  //     const { router, history } = await newRouter()
-  //     jest.spyOn(history, 'replace')
-  //     await router.replace({ path: '/foo' })
-  //     expect(history.replace).toHaveBeenCalledTimes(1)
-  //     expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
-  //   })
+    it('can replaces current location with an object location', async () => {
+      const { router, history } = await newRouter()
+      jest.spyOn(history, 'replace')
+      await router.replace({ path: '/foo' })
+      expect(history.replace).toHaveBeenCalledTimes(1)
+      expect(history.replace).toHaveBeenCalledWith('/foo', expect.anything())
+    })
 
-  //   it('navigates if the location does not exist', async () => {
-  //     const { router } = await newRouter({ routes: [routes[0]] })
-  //     const spy = jest.fn((to, from, next) => next())
-  //     router.beforeEach(spy)
-  //     await router.push('/idontexist')
-  //     expect(spy).toHaveBeenCalledTimes(1)
-  //     expect(router.currentRoute.value).toMatchObject({ matched: [] })
-  //     spy.mockClear()
-  //     await router.push('/me-neither')
-  //     expect(router.currentRoute.value).toMatchObject({ matched: [] })
-  //     expect(spy).toHaveBeenCalledTimes(1)
-  //     expect('No match found').toHaveBeenWarnedTimes(2)
-  //   })
+    it('navigates if the location does not exist', async () => {
+      const { router } = await newRouter({ routes: [routes[0]] })
+      const spy = jest.fn((to, from, next) => next())
+      router.beforeEach(spy)
+      await router.push('/idontexist')
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(router.currentRoute.value).toMatchObject({ matched: [] })
+      spy.mockClear()
+      await router.push('/me-neither')
+      expect(router.currentRoute.value).toMatchObject({ matched: [] })
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect('No match found').toHaveBeenWarnedTimes(2)
+    })
 
-  //   it('casts number params to string', async () => {
-  //     const { router } = await newRouter()
-  //     await router.push({ name: 'Param', params: { p: 0 } })
-  //     expect(router.currentRoute.value).toMatchObject({ params: { p: '0' } })
-  //   })
+    it('casts number params to string', async () => {
+      const { router } = await newRouter()
+      await router.push({ name: 'Param', params: { p: 0 } })
+      expect(router.currentRoute.value).toMatchObject({ params: { p: '0' } })
+    })
 
-  //   it('removes null/undefined params', async () => {
-  //     const { router } = await newRouter()
+    it('removes null/undefined params', async () => {
+      const { router } = await newRouter()
 
-  //     const route1 = router.resolve({
-  //       name: 'optional',
-  //       params: { p: undefined },
-  //     })
-  //     expect(route1.path).toBe('/optional')
-  //     expect(route1.params).toEqual({})
+      const route1 = router.resolve({
+        name: 'optional',
+        params: { p: undefined },
+      })
+      expect(route1.path).toBe('/optional')
+      expect(route1.params).toEqual({})
 
-  //     const route2 = router.resolve({
-  //       name: 'optional',
-  //       params: { p: null },
-  //     })
-  //     expect(route2.path).toBe('/optional')
-  //     expect(route2.params).toEqual({})
+      const route2 = router.resolve({
+        name: 'optional',
+        params: { p: null },
+      })
+      expect(route2.path).toBe('/optional')
+      expect(route2.params).toEqual({})
 
-  //     await router.push({ name: 'optional', params: { p: null } })
-  //     expect(router.currentRoute.value.params).toEqual({})
-  //     await router.push({ name: 'optional', params: {} })
-  //   })
+      await router.push({ name: 'optional', params: { p: null } })
+      expect(router.currentRoute.value.params).toEqual({})
+      await router.push({ name: 'optional', params: {} })
+    })
 
-  //   it('removes null/undefined optional params when current location has it', async () => {
-  //     const { router } = await newRouter()
+    it('removes null/undefined optional params when current location has it', async () => {
+      const { router } = await newRouter()
 
-  //     await router.push({ name: 'optional', params: { p: 'a' } })
-  //     await router.push({ name: 'optional', params: { p: null } })
-  //     expect(router.currentRoute.value.params).toEqual({})
+      await router.push({ name: 'optional', params: { p: 'a' } })
+      await router.push({ name: 'optional', params: { p: null } })
+      expect(router.currentRoute.value.params).toEqual({})
 
-  //     await router.push({ name: 'optional', params: { p: 'a' } })
-  //     await router.push({ name: 'optional', params: { p: undefined } })
-  //     expect(router.currentRoute.value.params).toEqual({})
-  //   })
+      await router.push({ name: 'optional', params: { p: 'a' } })
+      await router.push({ name: 'optional', params: { p: undefined } })
+      expect(router.currentRoute.value.params).toEqual({})
+    })
 
-  //   it('keeps empty strings in optional params', async () => {
-  //     const { router } = await newRouter()
-  //     const route1 = router.resolve({ name: 'optional', params: { p: '' } })
-  //     expect(route1.params).toEqual({ p: '' })
-  //   })
+    it('keeps empty strings in optional params', async () => {
+      const { router } = await newRouter()
+      const route1 = router.resolve({ name: 'optional', params: { p: '' } })
+      expect(route1.params).toEqual({ p: '' })
+    })
 
-  //   it('navigates to same route record but different query', async () => {
-  //     const { router } = await newRouter()
-  //     await router.push('/?q=1')
-  //     expect(router.currentRoute.value.query).toEqual({ q: '1' })
-  //     await router.push('/?q=2')
-  //     expect(router.currentRoute.value.query).toEqual({ q: '2' })
-  //   })
+    it('navigates to same route record but different query', async () => {
+      const { router } = await newRouter()
+      await router.push('/?q=1')
+      expect(router.currentRoute.value.query).toEqual({ q: '1' })
+      await router.push('/?q=2')
+      expect(router.currentRoute.value.query).toEqual({ q: '2' })
+    })
 
-  //   it('navigates to same route record but different hash', async () => {
-  //     const { router } = await newRouter()
-  //     await router.push('/#one')
-  //     expect(router.currentRoute.value.hash).toBe('#one')
-  //     await router.push('/#two')
-  //     expect(router.currentRoute.value.hash).toBe('#two')
-  //   })
+    it('navigates to same route record but different hash', async () => {
+      const { router } = await newRouter()
+      await router.push('/#one')
+      expect(router.currentRoute.value.hash).toBe('#one')
+      await router.push('/#two')
+      expect(router.currentRoute.value.hash).toBe('#two')
+    })
 
-  //   it('fails if required params are missing', async () => {
-  //     const { router } = await newRouter()
-  //     expect(() => router.resolve({ name: 'Param', params: {} })).toThrowError(
-  //       /missing required param "p"/i
-  //     )
-  //     expect(() =>
-  //       router.resolve({ name: 'Param', params: { p: 'po' } })
-  //     ).not.toThrow()
-  //   })
+    it('fails if required params are missing', async () => {
+      const { router } = await newRouter()
+      expect(() => router.resolve({ name: 'Param', params: {} })).toThrowError(
+        /missing required param "p"/i
+      )
+      expect(() =>
+        router.resolve({ name: 'Param', params: { p: 'po' } })
+      ).not.toThrow()
+    })
 
   //   it('fails if required repeated params are missing', async () => {
   //     const { router } = await newRouter()

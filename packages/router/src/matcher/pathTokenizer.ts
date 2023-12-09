@@ -54,7 +54,7 @@ export function tokenizePath(path: string): Array<Token[]> {
     )
   }
 
-  //   // if (tokenCache.has(path)) return tokenCache.get(path)!
+  // if (tokenCache.has(path)) return tokenCache.get(path)!
 
   function crash(message: string) {
     throw new Error(`ERR (${state})/"${buffer}": ${message}`)
@@ -94,17 +94,17 @@ export function tokenizePath(path: string): Array<Token[]> {
       state === TokenizerState.ParamRegExp ||
       state === TokenizerState.ParamRegExpEnd
     ) {
-      //       if (segment.length > 1 && (char === '*' || char === '+'))
-      //         crash(
-      //           `A repeatable param (${buffer}) must be alone in its segment. eg: '/:ids+.`
-      //         )
-      //       segment.push({
-      //         type: TokenType.Param,
-      //         value: buffer,
-      //         regexp: customRe,
-      //         repeatable: char === '*' || char === '+',
-      //         optional: char === '*' || char === '?',
-      //       })
+      if (segment.length > 1 && (char === '*' || char === '+'))
+        crash(
+          `A repeatable param (${buffer}) must be alone in its segment. eg: '/:ids+.`
+        )
+      segment.push({
+        type: TokenType.Param,
+        value: buffer,
+        regexp: customRe,
+        repeatable: char === '*' || char === '+',
+        optional: char === '*' || char === '?',
+      })
     } else {
       crash('Invalid state to consume buffer')
     }
@@ -148,39 +148,39 @@ export function tokenizePath(path: string): Array<Token[]> {
         if (char === '(') {
           state = TokenizerState.ParamRegExp
         } else if (VALID_PARAM_RE.test(char)) {
-          //           addCharToBuffer()
+          addCharToBuffer()
         } else {
-          //           consumeBuffer()
-          //           state = TokenizerState.Static
-          //           // go back one character if we were not modifying
-          //           if (char !== '*' && char !== '?' && char !== '+') i--
+          consumeBuffer()
+          state = TokenizerState.Static
+          // go back one character if we were not modifying
+          if (char !== '*' && char !== '?' && char !== '+') i--
         }
         break
 
       case TokenizerState.ParamRegExp:
-        //         // TODO: is it worth handling nested regexp? like :p(?:prefix_([^/]+)_suffix)
-        //         // it already works by escaping the closing )
-        //         // https://paths.esm.dev/?p=AAMeJbiAwQEcDKbAoAAkP60PG2R6QAvgNaA6AFACM2ABuQBB#
-        //         // is this really something people need since you can also write
-        //         // /prefix_:p()_suffix
-        //         if (char === ')') {
-        //           // handle the escaped )
-        //           if (customRe[customRe.length - 1] == '\\')
-        //             customRe = customRe.slice(0, -1) + char
-        //           else state = TokenizerState.ParamRegExpEnd
-        //         } else {
-        //           customRe += char
-        //         }
+        // TODO: is it worth handling nested regexp? like :p(?:prefix_([^/]+)_suffix)
+        // it already works by escaping the closing )
+        // https://paths.esm.dev/?p=AAMeJbiAwQEcDKbAoAAkP60PG2R6QAvgNaA6AFACM2ABuQBB#
+        // is this really something people need since you can also write
+        // /prefix_:p()_suffix
+        if (char === ')') {
+          // handle the escaped )
+          if (customRe[customRe.length - 1] == '\\')
+            customRe = customRe.slice(0, -1) + char
+          else state = TokenizerState.ParamRegExpEnd
+        } else {
+          customRe += char
+        }
         break
 
-      //       case TokenizerState.ParamRegExpEnd:
-      //         // same as finalizing a param
-      //         consumeBuffer()
-      //         state = TokenizerState.Static
-      //         // go back one character if we were not modifying
-      //         if (char !== '*' && char !== '?' && char !== '+') i--
-      //         customRe = ''
-      //         break
+      case TokenizerState.ParamRegExpEnd:
+        //         // same as finalizing a param
+        //         consumeBuffer()
+        //         state = TokenizerState.Static
+        //         // go back one character if we were not modifying
+        //         if (char !== '*' && char !== '?' && char !== '+') i--
+        //         customRe = ''
+        break
 
       default:
         crash('Unknown state')

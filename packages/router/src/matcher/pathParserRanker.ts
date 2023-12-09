@@ -3,14 +3,14 @@ import { assign, isArray } from '../utils'
 
 export type PathParams = Record<string, string | string[]>
 
-// /**
-//  * A param in a url like `/users/:id`
-//  */
-// interface PathParserParamKey {
-//   name: string
-//   repeatable: boolean
-//   optional: boolean
-// }
+/**
+ * A param in a url like `/users/:id`
+ */
+interface PathParserParamKey {
+  name: string
+  repeatable: boolean
+  optional: boolean
+}
 
 export interface PathParser {
   /**
@@ -18,15 +18,15 @@ export interface PathParser {
    */
   re: RegExp
 
-  //   /**
-  //    * The score of the parser
-  //    */
-  //   score: Array<number[]>
+  /**
+   * The score of the parser
+   */
+  score: Array<number[]>
 
-  //   /**
-  //    * Keys that appeared in the path
-  //    */
-  //   keys: PathParserParamKey[]
+  /**
+   * Keys that appeared in the path
+   */
+  keys: PathParserParamKey[]
   /**
    * Parses a url and returns the matched params or null if it doesn't match. An
    * optional param that isn't preset will be an empty string. A repeatable
@@ -86,8 +86,8 @@ export type PathParserOptions = Pick<
   'end' | 'sensitive' | 'strict'
 >
 
-// // default pattern for a param: non-greedy everything but /
-// const BASE_PARAM_PATTERN = '[^/]+?'
+// default pattern for a param: non-greedy everything but /
+const BASE_PARAM_PATTERN = '[^/]+?'
 
 const BASE_PATH_PARSER_OPTIONS: Required<_PathParserOptions> = {
   sensitive: false,
@@ -129,12 +129,12 @@ export function tokensToParser(
 ): PathParser {
   const options = assign({}, BASE_PATH_PARSER_OPTIONS, extraOptions)
 
-  //   // the amount of scores is the same as the length of segments except for the root segment "/"
-  //   const score: Array<number[]> = []
+  // the amount of scores is the same as the length of segments except for the root segment "/"
+  const score: Array<number[]> = []
   // the regexp as a string
   let pattern = options.start ? '^' : ''
-  //   // extracted keys
-  //   const keys: PathParserParamKey[] = []
+  // extracted keys
+  const keys: PathParserParamKey[] = []
 
   for (const segment of segments) {
     // the root segment needs special treatment
@@ -153,37 +153,37 @@ export function tokensToParser(
         pattern += token.value.replace(REGEX_CHARS_RE, '\\$&')
         subSegmentScore += PathScore.Static
       } else if (token.type === TokenType.Param) {
-        //         const { value, repeatable, optional, regexp } = token
-        //         keys.push({
-        //           name: value,
-        //           repeatable,
-        //           optional,
-        //         })
-        //         const re = regexp ? regexp : BASE_PARAM_PATTERN
-        //         // the user provided a custom regexp /:id(\\d+)
-        //         if (re !== BASE_PARAM_PATTERN) {
-        //           subSegmentScore += PathScore.BonusCustomRegExp
-        //           // make sure the regexp is valid before using it
-        //           try {
-        //             new RegExp(`(${re})`)
-        //           } catch (err) {
-        //             throw new Error(
-        //               `Invalid custom RegExp for param "${value}" (${re}): ` +
-        //                 (err as Error).message
-        //             )
-        //           }
-        //         }
-        //         // when we repeat we must take care of the repeating leading slash
-        //         let subPattern = repeatable ? `((?:${re})(?:/(?:${re}))*)` : `(${re})`
-        //         // prepend the slash if we are starting a new segment
-        //         if (!tokenIndex)
-        //           subPattern =
-        //             // avoid an optional / if there are more segments e.g. /:p?-static
-        //             // or /:p?-:p2
-        //             optional && segment.length < 2
-        //               ? `(?:/${subPattern})`
-        //               : '/' + subPattern
-        //         if (optional) subPattern += '?'
+        const { value, repeatable, optional, regexp } = token
+        keys.push({
+          name: value,
+          repeatable,
+          optional,
+        })
+        const re = regexp ? regexp : BASE_PARAM_PATTERN
+        // the user provided a custom regexp /:id(\\d+)
+        if (re !== BASE_PARAM_PATTERN) {
+          //           subSegmentScore += PathScore.BonusCustomRegExp
+          //           // make sure the regexp is valid before using it
+          //           try {
+          //             new RegExp(`(${re})`)
+          //           } catch (err) {
+          //             throw new Error(
+          //               `Invalid custom RegExp for param "${value}" (${re}): ` +
+          //                 (err as Error).message
+          //             )
+          //           }
+        }
+        // when we repeat we must take care of the repeating leading slash
+        let subPattern = repeatable ? `((?:${re})(?:/(?:${re}))*)` : `(${re})`
+        // prepend the slash if we are starting a new segment
+        if (!tokenIndex)
+          subPattern =
+            // avoid an optional / if there are more segments e.g. /:p?-static
+            // or /:p?-:p2
+            optional && segment.length < 2
+              ? `(?:/${subPattern})`
+              : '/' + subPattern
+        if (optional) subPattern += '?'
         //         pattern += subPattern
         //         subSegmentScore += PathScore.Dynamic
         //         if (optional) subSegmentScore += PathScore.BonusOptional
@@ -229,44 +229,44 @@ export function tokensToParser(
 
   function stringify(params: PathParams): string {
     let path = ''
-    //     // for optional parameters to allow to be empty
-    //     let avoidDuplicatedSlash: boolean = false
-    //     for (const segment of segments) {
-    //       if (!avoidDuplicatedSlash || !path.endsWith('/')) path += '/'
-    //       avoidDuplicatedSlash = false
+    // for optional parameters to allow to be empty
+    let avoidDuplicatedSlash: boolean = false
+    for (const segment of segments) {
+      if (!avoidDuplicatedSlash || !path.endsWith('/')) path += '/'
+      avoidDuplicatedSlash = false
 
-    //       for (const token of segment) {
-    //         if (token.type === TokenType.Static) {
-    //           path += token.value
-    //         } else if (token.type === TokenType.Param) {
-    //           const { value, repeatable, optional } = token
-    //           const param: string | readonly string[] =
-    //             value in params ? params[value] : ''
+      for (const token of segment) {
+        if (token.type === TokenType.Static) {
+          path += token.value
+        } else if (token.type === TokenType.Param) {
+          const { value, repeatable, optional } = token
+          const param: string | readonly string[] =
+            value in params ? params[value] : ''
 
-    //           if (isArray(param) && !repeatable) {
-    //             throw new Error(
-    //               `Provided param "${value}" is an array but it is not repeatable (* or + modifiers)`
-    //             )
-    //           }
+          if (isArray(param) && !repeatable) {
+            throw new Error(
+              `Provided param "${value}" is an array but it is not repeatable (* or + modifiers)`
+            )
+          }
 
-    //           const text: string = isArray(param)
-    //             ? (param as string[]).join('/')
-    //             : (param as string)
-    //           if (!text) {
-    //             if (optional) {
-    //               // if we have more than one optional param like /:a?-static we don't need to care about the optional param
-    //               if (segment.length < 2) {
-    //                 // remove the last slash as we could be at the end
-    //                 if (path.endsWith('/')) path = path.slice(0, -1)
-    //                 // do not append a slash on the next iteration
-    //                 else avoidDuplicatedSlash = true
-    //               }
-    //             } else throw new Error(`Missing required param "${value}"`)
-    //           }
-    //           path += text
-    //         }
-    //       }
-    //     }
+          const text: string = isArray(param)
+            ? (param as string[]).join('/')
+            : (param as string)
+          if (!text) {
+            if (optional) {
+              // if we have more than one optional param like /:a?-static we don't need to care about the optional param
+              if (segment.length < 2) {
+                // remove the last slash as we could be at the end
+                if (path.endsWith('/')) path = path.slice(0, -1)
+                // do not append a slash on the next iteration
+                else avoidDuplicatedSlash = true
+              }
+            } else throw new Error(`Missing required param "${value}"`)
+          }
+          path += text
+        }
+      }
+    }
 
     // avoid empty path when we have multiple optional params
     return path || '/'
@@ -274,8 +274,8 @@ export function tokensToParser(
 
   return {
     re,
-    // score,
-    // keys,
+    score,
+    keys,
     parse,
     stringify,
   }
