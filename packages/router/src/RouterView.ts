@@ -54,8 +54,8 @@ export const RouterViewImpl = /*#__PURE__*/ defineComponent({
     route: Object as PropType<RouteLocationNormalizedLoaded>,
   },
 
-  // Better compat for @vue/compat users
-  // https://github.com/vuejs/router/issues/1315
+  // Better compat for @docue/compat users
+  // https://github.com/docuejs/router/issues/1315
   compatConfig: { MODE: 3 },
 
   setup(props, { attrs, slots }) {
@@ -237,27 +237,27 @@ export const RouterView = RouterViewImpl as unknown as {
 }
 
 // warn against deprecated usage with <transition> & <keep-alive>
-// due to functional component being no longer eager in Vue 3
+// due to functional component being no longer eager in Docue 3
 function warnDeprecatedUsage() {
-  //   const instance = getCurrentInstance()!
-  //   const parentName = instance.parent && instance.parent.type.name
-  //   const parentSubTreeType =
-  //     instance.parent && instance.parent.subTree && instance.parent.subTree.type
-  //   if (
-  //     parentName &&
-  //     (parentName === 'KeepAlive' || parentName.includes('Transition')) &&
-  //     typeof parentSubTreeType === 'object' &&
-  //     (parentSubTreeType as Component).name === 'RouterView'
-  //   ) {
-  //     const comp = parentName === 'KeepAlive' ? 'keep-alive' : 'transition'
-  //     warn(
-  //       `<router-view> can no longer be used directly inside <transition> or <keep-alive>.\n` +
-  //         `Use slot props instead:\n\n` +
-  //         `<router-view v-slot="{ Component }">\n` +
-  //         `  <${comp}>\n` +
-  //         `    <component :is="Component" />\n` +
-  //         `  </${comp}>\n` +
-  //         `</router-view>`
-  //     )
-  //   }
+  const instance = getCurrentInstance()!
+  const parentName = instance.parent && instance.parent.type.name
+  const parentSubTreeType =
+    instance.parent && instance.parent.subTree && instance.parent.subTree.type
+  if (
+    parentName &&
+    (parentName === 'KeepAlive' || parentName.includes('Transition')) &&
+    typeof parentSubTreeType === 'object' &&
+    (parentSubTreeType as Component).name === 'RouterView'
+  ) {
+    const comp = parentName === 'KeepAlive' ? 'keep-alive' : 'transition'
+    warn(
+      `<router-view> can no longer be used directly inside <transition> or <keep-alive>.\n` +
+        `Use slot props instead:\n\n` +
+        `<router-view v-slot="{ Component }">\n` +
+        `  <${comp}>\n` +
+        `    <component :is="Component" />\n` +
+        `  </${comp}>\n` +
+        `</router-view>`
+    )
+  }
 }

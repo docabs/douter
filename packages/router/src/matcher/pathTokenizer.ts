@@ -41,7 +41,7 @@ const VALID_PARAM_RE = /[a-zA-Z0-9_]/
 // After some profiling, the cache seems to be unnecessary because tokenizePath
 // (the slowest part of adding a route) is very fast
 
-// // const tokenCache = new Map<string, Token[][]>()
+// const tokenCache = new Map<string, Token[][]>()
 
 export function tokenizePath(path: string): Array<Token[]> {
   if (!path) return [[]]
@@ -174,12 +174,12 @@ export function tokenizePath(path: string): Array<Token[]> {
         break
 
       case TokenizerState.ParamRegExpEnd:
-        //         // same as finalizing a param
-        //         consumeBuffer()
-        //         state = TokenizerState.Static
-        //         // go back one character if we were not modifying
-        //         if (char !== '*' && char !== '?' && char !== '+') i--
-        //         customRe = ''
+        // same as finalizing a param
+        consumeBuffer()
+        state = TokenizerState.Static
+        // go back one character if we were not modifying
+        if (char !== '*' && char !== '?' && char !== '+') i--
+        customRe = ''
         break
 
       default:
@@ -188,8 +188,8 @@ export function tokenizePath(path: string): Array<Token[]> {
     }
   }
 
-  // if (state === TokenizerState.ParamRegExp)
-  //   crash(`Unfinished custom RegExp for param "${buffer}"`)
+  if (state === TokenizerState.ParamRegExp)
+    crash(`Unfinished custom RegExp for param "${buffer}"`)
 
   consumeBuffer()
   finalizeSegment()

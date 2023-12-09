@@ -16,9 +16,9 @@ import type {
   _PathParserOptions,
 } from './pathParserRanker'
 
-// import { comparePathParserScore } from './pathParserRanker'
+import { comparePathParserScore } from './pathParserRanker'
 
-// import { warn } from '../warning'
+import { warn } from '../warning'
 import { assign, noop } from '../utils'
 
 /**
@@ -77,11 +77,11 @@ export function createRouterMatcher(
     // used later on to remove by name
     const isRootAdd = !originalRecord
     const mainNormalizedRecord = normalizeRouteRecord(record)
-    //     if (__DEV__) {
-    //       checkChildMissingNameWithEmptyPath(mainNormalizedRecord, parent)
-    //     }
-    //     // we might be the child of an alias
-    //     mainNormalizedRecord.aliasOf = originalRecord && originalRecord.record
+    if (__DEV__) {
+      checkChildMissingNameWithEmptyPath(mainNormalizedRecord, parent)
+    }
+    // we might be the child of an alias
+    mainNormalizedRecord.aliasOf = originalRecord && originalRecord.record
     const options: PathParserOptions = mergeOptions(globalOptions, record)
     // generate an array of records to correctly handle aliases
     const normalizedRecords: (typeof mainNormalizedRecord)[] = [
@@ -90,24 +90,24 @@ export function createRouterMatcher(
     if ('alias' in record) {
       const aliases =
         typeof record.alias === 'string' ? [record.alias] : record.alias!
-      //       for (const alias of aliases) {
-      //         normalizedRecords.push(
-      //           assign({}, mainNormalizedRecord, {
-      //             // this allows us to hold a copy of the `components` option
-      //             // so that async components cache is hold on the original record
-      //             components: originalRecord
-      //               ? originalRecord.record.components
-      //               : mainNormalizedRecord.components,
-      //             path: alias,
-      //             // we might be the child of an alias
-      //             aliasOf: originalRecord
-      //               ? originalRecord.record
-      //               : mainNormalizedRecord,
-      //             // the aliases are always of the same kind as the original since they
-      //             // are defined on the same record
-      //           }) as typeof mainNormalizedRecord
-      //         )
-      //       }
+      for (const alias of aliases) {
+        normalizedRecords.push(
+          assign({}, mainNormalizedRecord, {
+            // this allows us to hold a copy of the `components` option
+            // so that async components cache is hold on the original record
+            components: originalRecord
+              ? originalRecord.record.components
+              : mainNormalizedRecord.components,
+            path: alias,
+            // we might be the child of an alias
+            aliasOf: originalRecord
+              ? originalRecord.record
+              : mainNormalizedRecord,
+            // the aliases are always of the same kind as the original since they
+            // are defined on the same record
+          }) as typeof mainNormalizedRecord
+        )
+      }
     }
 
     let matcher: RouteRecordMatcher
@@ -126,12 +126,12 @@ export function createRouterMatcher(
           parent.record.path + (path && connectingSlash + path)
       }
 
-      //       if (__DEV__ && normalizedRecord.path === '*') {
-      //         throw new Error(
-      //           'Catch all routes ("*") must now be defined using a param with a custom regexp.\n' +
-      //             'See more at https://next.router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes.'
-      //         )
-      //       }
+      if (__DEV__ && normalizedRecord.path === '*') {
+        throw new Error(
+          'Catch all routes ("*") must now be defined using a param with a custom regexp.\n' +
+            'See more at https://next.router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes.'
+        )
+      }
 
       // create the object beforehand, so it can be passed to children
       matcher = createRouteRecordMatcher(normalizedRecord, parent, options)
@@ -142,18 +142,18 @@ export function createRouterMatcher(
       // if we are an alias we must tell the original record that we exist,
       // so we can be removed
       if (originalRecord) {
-        //         originalRecord.alias.push(matcher)
-        //         if (__DEV__) {
-        //           checkSameParams(originalRecord, matcher)
-        //         }
+        originalRecord.alias.push(matcher)
+        if (__DEV__) {
+          checkSameParams(originalRecord, matcher)
+        }
       } else {
-        //         // otherwise, the first record is the original and others are aliases
-        //         originalMatcher = originalMatcher || matcher
-        //         if (originalMatcher !== matcher) originalMatcher.alias.push(matcher)
-        //         // remove the route if named and only for the top record (avoid in nested calls)
-        //         // this works because the original record is the first one
-        //         if (isRootAdd && record.name && !isAliasRecord(matcher))
-        //           removeRoute(record.name)
+        // otherwise, the first record is the original and others are aliases
+        originalMatcher = originalMatcher || matcher
+        if (originalMatcher !== matcher) originalMatcher.alias.push(matcher)
+        // remove the route if named and only for the top record (avoid in nested calls)
+        // this works because the original record is the first one
+        if (isRootAdd && record.name && !isAliasRecord(matcher))
+          removeRoute(record.name)
       }
 
       if (mainNormalizedRecord.children) {
@@ -167,9 +167,9 @@ export function createRouterMatcher(
         }
       }
 
-      //       // if there was no original record, then the first one was not an alias and all
-      //       // other aliases (if any) need to reference this record when adding children
-      //       originalRecord = originalRecord || matcher
+      // if there was no original record, then the first one was not an alias and all
+      // other aliases (if any) need to reference this record when adding children
+      originalRecord = originalRecord || matcher
 
       //       // TODO: add normalized records for more flexibility
       //       // if (parent && isAliasRecord(originalRecord)) {
@@ -197,23 +197,23 @@ export function createRouterMatcher(
   }
 
   function removeRoute(matcherRef: RouteRecordName | RouteRecordMatcher) {
-    //     if (isRouteName(matcherRef)) {
-    //       const matcher = matcherMap.get(matcherRef)
-    //       if (matcher) {
-    //         matcherMap.delete(matcherRef)
-    //         matchers.splice(matchers.indexOf(matcher), 1)
-    //         matcher.children.forEach(removeRoute)
-    //         matcher.alias.forEach(removeRoute)
-    //       }
-    //     } else {
-    //       const index = matchers.indexOf(matcherRef)
-    //       if (index > -1) {
-    //         matchers.splice(index, 1)
-    //         if (matcherRef.record.name) matcherMap.delete(matcherRef.record.name)
-    //         matcherRef.children.forEach(removeRoute)
-    //         matcherRef.alias.forEach(removeRoute)
-    //       }
-    //     }
+    if (isRouteName(matcherRef)) {
+      const matcher = matcherMap.get(matcherRef)
+      if (matcher) {
+        matcherMap.delete(matcherRef)
+        matchers.splice(matchers.indexOf(matcher), 1)
+        matcher.children.forEach(removeRoute)
+        matcher.alias.forEach(removeRoute)
+      }
+    } else {
+      const index = matchers.indexOf(matcherRef)
+      if (index > -1) {
+        matchers.splice(index, 1)
+        if (matcherRef.record.name) matcherMap.delete(matcherRef.record.name)
+        matcherRef.children.forEach(removeRoute)
+        matcherRef.alias.forEach(removeRoute)
+      }
+    }
   }
 
   function getRoutes() {
@@ -222,15 +222,15 @@ export function createRouterMatcher(
 
   function insertMatcher(matcher: RouteRecordMatcher) {
     let i = 0
-    //     while (
-    //       i < matchers.length &&
-    //       comparePathParserScore(matcher, matchers[i]) >= 0 &&
-    //       // Adding children with empty path should still appear before the parent
-    //       // https://github.com/vuejs/router/issues/1124
-    //       (matcher.record.path !== matchers[i].record.path ||
-    //         !isRecordChildOf(matcher, matchers[i]))
-    //     )
-    //       i++
+    while (
+      i < matchers.length &&
+      comparePathParserScore(matcher, matchers[i]) >= 0 &&
+      // Adding children with empty path should still appear before the parent
+      // https://github.com/vuejs/router/issues/1124
+      (matcher.record.path !== matchers[i].record.path ||
+        !isRecordChildOf(matcher, matchers[i]))
+    )
+      i++
     matchers.splice(i, 0, matcher)
     // only add the original record to the name map
     if (matcher.record.name && !isAliasRecord(matcher))
@@ -254,20 +254,20 @@ export function createRouterMatcher(
           location,
         })
 
-      //       // warn if the user is passing invalid params so they can debug it better when they get removed
-      //       if (__DEV__) {
-      //         const invalidParams: string[] = Object.keys(
-      //           location.params || {}
-      //         ).filter(paramName => !matcher!.keys.find(k => k.name === paramName))
+      // warn if the user is passing invalid params so they can debug it better when they get removed
+      if (__DEV__) {
+        const invalidParams: string[] = Object.keys(
+          location.params || {}
+        ).filter(paramName => !matcher!.keys.find(k => k.name === paramName))
 
-      //         if (invalidParams.length) {
-      //           warn(
-      //             `Discarded invalid param(s) "${invalidParams.join(
-      //               '", "'
-      //             )}" when navigating. See https://github.com/vuejs/router/blob/main/packages/router/CHANGELOG.md#414-2022-08-22 for more details.`
-      //           )
-      //         }
-      //       }
+        if (invalidParams.length) {
+          warn(
+            `Discarded invalid param(s) "${invalidParams.join(
+              '", "'
+            )}" when navigating. See https://github.com/vuejs/router/blob/main/packages/router/CHANGELOG.md#414-2022-08-22 for more details.`
+          )
+        }
+      }
 
       name = matcher.record.name
       params = assign(
@@ -293,11 +293,11 @@ export function createRouterMatcher(
       // this also allows the user to control the encoding
       path = location.path
 
-      //       if (__DEV__ && !path.startsWith('/')) {
-      //         warn(
-      //           `The Matcher cannot resolve relative paths but received "${path}". Unless you directly called \`matcher.resolve("${path}")\`, this is probably a bug in vue-router. Please open an issue at https://github.com/vuejs/router/issues/new/choose.`
-      //         )
-      //       }
+      if (__DEV__ && !path.startsWith('/')) {
+        warn(
+          `The Matcher cannot resolve relative paths but received "${path}". Unless you directly called \`matcher.resolve("${path}")\`, this is probably a bug in vue-router. Please open an issue at https://github.com/vuejs/router/issues/new/choose.`
+        )
+      }
 
       matcher = matchers.find(m => m.re.test(path))
       // matcher should have a value after the loop
@@ -406,16 +406,16 @@ function normalizeRecordProps(
   record: RouteRecordRaw
 ): Record<string, _RouteRecordProps> {
   const propsObject = {} as Record<string, _RouteRecordProps>
-  //   // props does not exist on redirect records, but we can set false directly
-  //   const props = record.props || false
-  //   if ('component' in record) {
-  //     propsObject.default = props
-  //   } else {
-  //     // NOTE: we could also allow a function to be applied to every component.
-  //     // Would need user feedback for use cases
-  //     for (const name in record.components)
-  //       propsObject[name] = typeof props === 'object' ? props[name] : props
-  //   }
+  // props does not exist on redirect records, but we can set false directly
+  const props = record.props || false
+  if ('component' in record) {
+    propsObject.default = props
+  } else {
+    // NOTE: we could also allow a function to be applied to every component.
+    // Would need user feedback for use cases
+    for (const name in record.components)
+      propsObject[name] = typeof props === 'object' ? props[name] : props
+  }
 
   return propsObject
 }
@@ -457,60 +457,60 @@ function mergeOptions<T extends object>(
   return options
 }
 
-// type ParamKey = RouteRecordMatcher['keys'][number]
+type ParamKey = RouteRecordMatcher['keys'][number]
 
-// function isSameParam(a: ParamKey, b: ParamKey): boolean {
-//   return (
-//     a.name === b.name &&
-//     a.optional === b.optional &&
-//     a.repeatable === b.repeatable
-//   )
-// }
+function isSameParam(a: ParamKey, b: ParamKey): boolean {
+  return (
+    a.name === b.name &&
+    a.optional === b.optional &&
+    a.repeatable === b.repeatable
+  )
+}
 
-// /**
-//  * Check if a path and its alias have the same required params
-//  *
-//  * @param a - original record
-//  * @param b - alias record
-//  */
-// function checkSameParams(a: RouteRecordMatcher, b: RouteRecordMatcher) {
-//   for (const key of a.keys) {
-//     if (!key.optional && !b.keys.find(isSameParam.bind(null, key)))
-//       return warn(
-//         `Alias "${b.record.path}" and the original record: "${a.record.path}" must have the exact same param named "${key.name}"`
-//       )
-//   }
-//   for (const key of b.keys) {
-//     if (!key.optional && !a.keys.find(isSameParam.bind(null, key)))
-//       return warn(
-//         `Alias "${b.record.path}" and the original record: "${a.record.path}" must have the exact same param named "${key.name}"`
-//       )
-//   }
-// }
+/**
+ * Check if a path and its alias have the same required params
+ *
+ * @param a - original record
+ * @param b - alias record
+ */
+function checkSameParams(a: RouteRecordMatcher, b: RouteRecordMatcher) {
+  for (const key of a.keys) {
+    if (!key.optional && !b.keys.find(isSameParam.bind(null, key)))
+      return warn(
+        `Alias "${b.record.path}" and the original record: "${a.record.path}" must have the exact same param named "${key.name}"`
+      )
+  }
+  for (const key of b.keys) {
+    if (!key.optional && !a.keys.find(isSameParam.bind(null, key)))
+      return warn(
+        `Alias "${b.record.path}" and the original record: "${a.record.path}" must have the exact same param named "${key.name}"`
+      )
+  }
+}
 
-// /**
-//  * A route with a name and a child with an empty path without a name should warn when adding the route
-//  *
-//  * @param mainNormalizedRecord - RouteRecordNormalized
-//  * @param parent - RouteRecordMatcher
-//  */
-// function checkChildMissingNameWithEmptyPath(
-//   mainNormalizedRecord: RouteRecordNormalized,
-//   parent?: RouteRecordMatcher
-// ) {
-//   if (
-//     parent &&
-//     parent.record.name &&
-//     !mainNormalizedRecord.name &&
-//     !mainNormalizedRecord.path
-//   ) {
-//     warn(
-//       `The route named "${String(
-//         parent.record.name
-//       )}" has a child without a name and an empty path. Using that name won't render the empty path child so you probably want to move the name to the child instead. If this is intentional, add a name to the child route to remove the warning.`
-//     )
-//   }
-// }
+/**
+ * A route with a name and a child with an empty path without a name should warn when adding the route
+ *
+ * @param mainNormalizedRecord - RouteRecordNormalized
+ * @param parent - RouteRecordMatcher
+ */
+function checkChildMissingNameWithEmptyPath(
+  mainNormalizedRecord: RouteRecordNormalized,
+  parent?: RouteRecordMatcher
+) {
+  if (
+    parent &&
+    parent.record.name &&
+    !mainNormalizedRecord.name &&
+    !mainNormalizedRecord.path
+  ) {
+    warn(
+      `The route named "${String(
+        parent.record.name
+      )}" has a child without a name and an empty path. Using that name won't render the empty path child so you probably want to move the name to the child instead. If this is intentional, add a name to the child route to remove the warning.`
+    )
+  }
+}
 
 // function checkMissingParamsInAbsolutePath(
 //   record: RouteRecordMatcher,
@@ -524,13 +524,13 @@ function mergeOptions<T extends object>(
 //   }
 // }
 
-// function isRecordChildOf(
-//   record: RouteRecordMatcher,
-//   parent: RouteRecordMatcher
-// ): boolean {
-//   return parent.children.some(
-//     child => child === record || isRecordChildOf(record, child)
-//   )
-// }
+function isRecordChildOf(
+  record: RouteRecordMatcher,
+  parent: RouteRecordMatcher
+): boolean {
+  return parent.children.some(
+    child => child === record || isRecordChildOf(record, child)
+  )
+}
 
 export type { PathParserOptions, _PathParserOptions }

@@ -3,9 +3,9 @@ import {
   NavigationCallback,
   START,
   HistoryState,
-  // NavigationType,
-  // NavigationDirection,
-  // NavigationInformation,
+  NavigationType,
+  NavigationDirection,
+  NavigationInformation,
   normalizeBase,
   createHref,
   HistoryLocation,
@@ -33,26 +33,26 @@ export function createMemoryHistory(base: string = ''): RouterHistory {
     queue.push(location)
   }
 
-  //   function triggerListeners(
-  //     to: HistoryLocation,
-  //     from: HistoryLocation,
-  //     { direction, delta }: Pick<NavigationInformation, 'direction' | 'delta'>
-  //   ): void {
-  //     const info: NavigationInformation = {
-  //       direction,
-  //       delta,
-  //       type: NavigationType.pop,
-  //     }
-  //     for (const callback of listeners) {
-  //       callback(to, from, info)
-  //     }
-  //   }
+  function triggerListeners(
+    to: HistoryLocation,
+    from: HistoryLocation,
+    { direction, delta }: Pick<NavigationInformation, 'direction' | 'delta'>
+  ): void {
+    const info: NavigationInformation = {
+      direction,
+      delta,
+      type: NavigationType.pop,
+    }
+    for (const callback of listeners) {
+      callback(to, from, info)
+    }
+  }
 
   const routerHistory: RouterHistory = {
     // rewritten by Object.defineProperty
     location: START,
-    //     // TODO: should be kept in queue
-    //     state: {},
+    // TODO: should be kept in queue
+    state: {},
     base,
     createHref: createHref.bind(null, base),
     replace(to) {
@@ -70,26 +70,26 @@ export function createMemoryHistory(base: string = ''): RouterHistory {
         if (index > -1) listeners.splice(index, 1)
       }
     },
-    //     destroy() {
-    //       listeners = []
-    //       queue = [START]
-    //       position = 0
-    //     },
-    //     go(delta, shouldTrigger = true) {
-    //       const from = this.location
-    //       const direction: NavigationDirection =
-    //         // we are considering delta === 0 going forward, but in abstract mode
-    //         // using 0 for the delta doesn't make sense like it does in html5 where
-    //         // it reloads the page
-    //         delta < 0 ? NavigationDirection.back : NavigationDirection.forward
-    //       position = Math.max(0, Math.min(position + delta, queue.length - 1))
-    //       if (shouldTrigger) {
-    //         triggerListeners(this.location, from, {
-    //           direction,
-    //           delta,
-    //         })
-    //       }
-    //     },
+    destroy() {
+      listeners = []
+      queue = [START]
+      position = 0
+    },
+    go(delta, shouldTrigger = true) {
+      const from = this.location
+      const direction: NavigationDirection =
+        // we are considering delta === 0 going forward, but in abstract mode
+        // using 0 for the delta doesn't make sense like it does in html5 where
+        // it reloads the page
+        delta < 0 ? NavigationDirection.back : NavigationDirection.forward
+      position = Math.max(0, Math.min(position + delta, queue.length - 1))
+      if (shouldTrigger) {
+        triggerListeners(this.location, from, {
+          direction,
+          delta,
+        })
+      }
+    },
   }
 
   Object.defineProperty(routerHistory, 'location', {
@@ -97,17 +97,17 @@ export function createMemoryHistory(base: string = ''): RouterHistory {
     get: () => queue[position],
   })
 
-  //   if (__TEST__) {
-  //     // @ts-expect-error: only for tests
-  //     routerHistory.changeURL = function (url: string) {
-  //       const from = this.location
-  //       queue.splice(position++ + 1, queue.length, url)
-  //       triggerListeners(this.location, from, {
-  //         direction: NavigationDirection.unknown,
-  //         delta: 0,
-  //       })
-  //     }
-  //   }
+  if (__TEST__) {
+    // @ts-expect-error: only for tests
+    routerHistory.changeURL = function (url: string) {
+      const from = this.location
+      queue.splice(position++ + 1, queue.length, url)
+      triggerListeners(this.location, from, {
+        direction: NavigationDirection.unknown,
+        delta: 0,
+      })
+    }
+  }
 
   return routerHistory
 }

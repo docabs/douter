@@ -104,12 +104,12 @@ const enum PathScore {
   SubSegment = 3 * _multiplier, // /multiple-:things-in-one-:segment
   Static = 4 * _multiplier, // /static
   Dynamic = 2 * _multiplier, // /:someId
-  //   BonusCustomRegExp = 1 * _multiplier, // /:someId(\\d+)
-  //   BonusWildcard = -4 * _multiplier - BonusCustomRegExp, // /:namedWildcard(.*) we remove the bonus added by the custom regexp
-  //   BonusRepeatable = -2 * _multiplier, // /:w+ or /:w*
-  //   BonusOptional = -0.8 * _multiplier, // /:w? or /:w*
-  //   // these two have to be under 0.1 so a strict /:page is still lower than /:a-:b
-  //   BonusStrict = 0.07 * _multiplier, // when options strict: true is passed, as the regex omits \/?
+  BonusCustomRegExp = 1 * _multiplier, // /:someId(\\d+)
+  BonusWildcard = -4 * _multiplier - BonusCustomRegExp, // /:namedWildcard(.*) we remove the bonus added by the custom regexp
+  BonusRepeatable = -2 * _multiplier, // /:w+ or /:w*
+  BonusOptional = -0.8 * _multiplier, // /:w? or /:w*
+  // these two have to be under 0.1 so a strict /:page is still lower than /:a-:b
+  BonusStrict = 0.07 * _multiplier, // when options strict: true is passed, as the regex omits \/?
   BonusCaseSensitive = 0.025 * _multiplier, // when options strict: true is passed, as the regex omits \/?
 }
 
@@ -162,16 +162,16 @@ export function tokensToParser(
         const re = regexp ? regexp : BASE_PARAM_PATTERN
         // the user provided a custom regexp /:id(\\d+)
         if (re !== BASE_PARAM_PATTERN) {
-          //           subSegmentScore += PathScore.BonusCustomRegExp
-          //           // make sure the regexp is valid before using it
-          //           try {
-          //             new RegExp(`(${re})`)
-          //           } catch (err) {
-          //             throw new Error(
-          //               `Invalid custom RegExp for param "${value}" (${re}): ` +
-          //                 (err as Error).message
-          //             )
-          //           }
+          subSegmentScore += PathScore.BonusCustomRegExp
+          // make sure the regexp is valid before using it
+          try {
+            new RegExp(`(${re})`)
+          } catch (err) {
+            throw new Error(
+              `Invalid custom RegExp for param "${value}" (${re}): ` +
+                (err as Error).message
+            )
+          }
         }
         // when we repeat we must take care of the repeating leading slash
         let subPattern = repeatable ? `((?:${re})(?:/(?:${re}))*)` : `(${re})`
@@ -184,24 +184,24 @@ export function tokensToParser(
               ? `(?:/${subPattern})`
               : '/' + subPattern
         if (optional) subPattern += '?'
-        //         pattern += subPattern
-        //         subSegmentScore += PathScore.Dynamic
-        //         if (optional) subSegmentScore += PathScore.BonusOptional
-        //         if (repeatable) subSegmentScore += PathScore.BonusRepeatable
-        //         if (re === '.*') subSegmentScore += PathScore.BonusWildcard
+        pattern += subPattern
+        subSegmentScore += PathScore.Dynamic
+        if (optional) subSegmentScore += PathScore.BonusOptional
+        if (repeatable) subSegmentScore += PathScore.BonusRepeatable
+        if (re === '.*') subSegmentScore += PathScore.BonusWildcard
       }
-      //       segmentScores.push(subSegmentScore)
+      segmentScores.push(subSegmentScore)
     }
-    //     // an empty array like /home/ -> [[{home}], []]
-    //     // if (!segment.length) pattern += '/'
-    //     score.push(segmentScores)
+    // an empty array like /home/ -> [[{home}], []]
+    // if (!segment.length) pattern += '/'
+    score.push(segmentScores)
   }
 
-  //   // only apply the strict bonus to the last score
-  //   if (options.strict && options.end) {
-  //     const i = score.length - 1
-  //     score[i][score[i].length - 1] += PathScore.BonusStrict
-  //   }
+  // only apply the strict bonus to the last score
+  if (options.strict && options.end) {
+    const i = score.length - 1
+    score[i][score[i].length - 1] += PathScore.BonusStrict
+  }
 
   // TODO: dev only warn double trailing slash
   if (!options.strict) pattern += '/?'
@@ -219,9 +219,9 @@ export function tokensToParser(
     if (!match) return null
 
     for (let i = 1; i < match.length; i++) {
-      //       const value: string = match[i] || ''
-      //       const key = keys[i - 1]
-      //       params[key.name] = value && key.repeatable ? value.split('/') : value
+      const value: string = match[i] || ''
+      const key = keys[i - 1]
+      params[key.name] = value && key.repeatable ? value.split('/') : value
     }
 
     return params
@@ -281,80 +281,80 @@ export function tokensToParser(
   }
 }
 
-// /**
-//  * Compares an array of numbers as used in PathParser.score and returns a
-//  * number. This function can be used to `sort` an array
-//  *
-//  * @param a - first array of numbers
-//  * @param b - second array of numbers
-//  * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
-//  * should be sorted first
-//  */
-// function compareScoreArray(a: number[], b: number[]): number {
-//   let i = 0
-//   while (i < a.length && i < b.length) {
-//     const diff = b[i] - a[i]
-//     // only keep going if diff === 0
-//     if (diff) return diff
+/**
+ * Compares an array of numbers as used in PathParser.score and returns a
+ * number. This function can be used to `sort` an array
+ *
+ * @param a - first array of numbers
+ * @param b - second array of numbers
+ * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
+ * should be sorted first
+ */
+function compareScoreArray(a: number[], b: number[]): number {
+  let i = 0
+  while (i < a.length && i < b.length) {
+    const diff = b[i] - a[i]
+    // only keep going if diff === 0
+    if (diff) return diff
 
-//     i++
-//   }
+    i++
+  }
 
-//   // if the last subsegment was Static, the shorter segments should be sorted first
-//   // otherwise sort the longest segment first
-//   if (a.length < b.length) {
-//     return a.length === 1 && a[0] === PathScore.Static + PathScore.Segment
-//       ? -1
-//       : 1
-//   } else if (a.length > b.length) {
-//     return b.length === 1 && b[0] === PathScore.Static + PathScore.Segment
-//       ? 1
-//       : -1
-//   }
+  // if the last subsegment was Static, the shorter segments should be sorted first
+  // otherwise sort the longest segment first
+  if (a.length < b.length) {
+    return a.length === 1 && a[0] === PathScore.Static + PathScore.Segment
+      ? -1
+      : 1
+  } else if (a.length > b.length) {
+    return b.length === 1 && b[0] === PathScore.Static + PathScore.Segment
+      ? 1
+      : -1
+  }
 
-//   return 0
-// }
+  return 0
+}
 
-// /**
-//  * Compare function that can be used with `sort` to sort an array of PathParser
-//  *
-//  * @param a - first PathParser
-//  * @param b - second PathParser
-//  * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
-//  */
-// export function comparePathParserScore(a: PathParser, b: PathParser): number {
-//   let i = 0
-//   const aScore = a.score
-//   const bScore = b.score
-//   while (i < aScore.length && i < bScore.length) {
-//     const comp = compareScoreArray(aScore[i], bScore[i])
-//     // do not return if both are equal
-//     if (comp) return comp
+/**
+ * Compare function that can be used with `sort` to sort an array of PathParser
+ *
+ * @param a - first PathParser
+ * @param b - second PathParser
+ * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
+ */
+export function comparePathParserScore(a: PathParser, b: PathParser): number {
+  let i = 0
+  const aScore = a.score
+  const bScore = b.score
+  while (i < aScore.length && i < bScore.length) {
+    const comp = compareScoreArray(aScore[i], bScore[i])
+    // do not return if both are equal
+    if (comp) return comp
 
-//     i++
-//   }
-//   if (Math.abs(bScore.length - aScore.length) === 1) {
-//     if (isLastScoreNegative(aScore)) return 1
-//     if (isLastScoreNegative(bScore)) return -1
-//   }
+    i++
+  }
+  if (Math.abs(bScore.length - aScore.length) === 1) {
+    if (isLastScoreNegative(aScore)) return 1
+    if (isLastScoreNegative(bScore)) return -1
+  }
 
-//   // if a and b share the same score entries but b has more, sort b first
-//   return bScore.length - aScore.length
-//   // this is the ternary version
-//   // return aScore.length < bScore.length
-//   //   ? 1
-//   //   : aScore.length > bScore.length
-//   //   ? -1
-//   //   : 0
-// }
+  // if a and b share the same score entries but b has more, sort b first
+  return bScore.length - aScore.length
+  // this is the ternary version
+  // return aScore.length < bScore.length
+  //   ? 1
+  //   : aScore.length > bScore.length
+  //   ? -1
+  //   : 0
+}
 
-// /**
-//  * This allows detecting splats at the end of a path: /home/:id(.*)*
-//  *
-//  * @param score - score to check
-//  * @returns true if the last entry is negative
-//  */
-// function isLastScoreNegative(score: PathParser['score']): boolean {
-//   const last = score[score.length - 1]
-//   return score.length > 0 && last[last.length - 1] < 0
-// }
+/**
+ * This allows detecting splats at the end of a path: /home/:id(.*)*
+ *
+ * @param score - score to check
+ * @returns true if the last entry is negative
+ */
+function isLastScoreNegative(score: PathParser['score']): boolean {
+  const last = score[score.length - 1]
+  return score.length > 0 && last[last.length - 1] < 0
+}

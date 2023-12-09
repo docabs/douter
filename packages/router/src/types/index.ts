@@ -18,14 +18,14 @@ export type Lazy<T> = () => Promise<T>
 //   readonly [P in keyof T]: Immutable<T[P]>
 // }
 
-// /**
-//  * Type to transform a static object into one that allows passing Refs as
-//  * values.
-//  * @internal
-//  */
-// export type VueUseOptions<T> = {
-//   [k in keyof T]: Ref<T[k]> | T[k]
-// }
+/**
+ * Type to transform a static object into one that allows passing Refs as
+ * values.
+ * @internal
+ */
+export type DocueUseOptions<T> = {
+  [k in keyof T]: Ref<T[k]> | T[k]
+}
 
 // export type TODO = any
 

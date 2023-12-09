@@ -77,11 +77,11 @@ export type {
   NavigationRedirectError,
 } from './errors'
 
-// export {
-//   onBeforeRouteLeave,
-//   onBeforeRouteUpdate,
-//   loadRouteLocation,
-// } from './navigationGuards'
+export {
+  onBeforeRouteLeave,
+  onBeforeRouteUpdate,
+  loadRouteLocation,
+} from './navigationGuards'
 // export { RouterLink, useLink } from './RouterLink'
 // export type {
 //   _RouterLinkI,
@@ -89,13 +89,13 @@ export type {
 //   UseLinkOptions,
 // } from './RouterLink'
 export { RouterView } from './RouterView'
-// export type { RouterViewProps } from './RouterView'
+export type { RouterViewProps } from './RouterView'
 
-// export type { TypesConfig } from './config'
+export type { TypesConfig } from './config'
 
-// export * from './useApi'
+export * from './useApi'
 
-// export * from './globalExtensions'
+export * from './globalExtensions'
 
 /**
  * The official Router for Docue 3.

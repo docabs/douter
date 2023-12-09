@@ -1,7 +1,7 @@
-// import { RouteLocationNormalized, RouteLocationNormalizedLoaded } from './types'
-// import { warn } from './warning'
+import { RouteLocationNormalized, RouteLocationNormalizedLoaded } from './types'
+import { warn } from './warning'
 
-// // we use types instead of interfaces to make it work with HistoryStateValue type
+// we use types instead of interfaces to make it work with HistoryStateValue type
 
 /**
  * Scroll position similar to
@@ -54,19 +54,19 @@ export type ScrollPosition = ScrollPositionCoordinates | ScrollPositionElement
 //   ): Awaitable<ScrollPosition | false | void>
 // }
 
-// function getElementPosition(
-//   el: Element,
-//   offset: ScrollPositionCoordinates
-// ): _ScrollPositionNormalized {
-//   const docRect = document.documentElement.getBoundingClientRect()
-//   const elRect = el.getBoundingClientRect()
+function getElementPosition(
+  el: Element,
+  offset: ScrollPositionCoordinates
+): _ScrollPositionNormalized {
+  const docRect = document.documentElement.getBoundingClientRect()
+  const elRect = el.getBoundingClientRect()
 
-//   return {
-//     behavior: offset.behavior,
-//     left: elRect.left - docRect.left - (offset.left || 0),
-//     top: elRect.top - docRect.top - (offset.top || 0),
-//   }
-// }
+  return {
+    behavior: offset.behavior,
+    left: elRect.left - docRect.left - (offset.left || 0),
+    top: elRect.top - docRect.top - (offset.top || 0),
+  }
+}
 
 export const computeScrollPosition = () =>
   ({
@@ -74,83 +74,83 @@ export const computeScrollPosition = () =>
     top: window.pageYOffset,
   } as _ScrollPositionNormalized)
 
-// export function scrollToPosition(position: ScrollPosition): void {
-//   let scrollToOptions: ScrollPositionCoordinates
+export function scrollToPosition(position: ScrollPosition): void {
+  let scrollToOptions: ScrollPositionCoordinates
 
-//   if ('el' in position) {
-//     const positionEl = position.el
-//     const isIdSelector =
-//       typeof positionEl === 'string' && positionEl.startsWith('#')
-//     /**
-//      * `id`s can accept pretty much any characters, including CSS combinators
-//      * like `>` or `~`. It's still possible to retrieve elements using
-//      * `document.getElementById('~')` but it needs to be escaped when using
-//      * `document.querySelector('#\\~')` for it to be valid. The only
-//      * requirements for `id`s are them to be unique on the page and to not be
-//      * empty (`id=""`). Because of that, when passing an id selector, it should
-//      * be properly escaped for it to work with `querySelector`. We could check
-//      * for the id selector to be simple (no CSS combinators `+ >~`) but that
-//      * would make things inconsistent since they are valid characters for an
-//      * `id` but would need to be escaped when using `querySelector`, breaking
-//      * their usage and ending up in no selector returned. Selectors need to be
-//      * escaped:
-//      *
-//      * - `#1-thing` becomes `#\31 -thing`
-//      * - `#with~symbols` becomes `#with\\~symbols`
-//      *
-//      * - More information about  the topic can be found at
-//      *   https://mathiasbynens.be/notes/html5-id-class.
-//      * - Practical example: https://mathiasbynens.be/demo/html5-id
-//      */
-//     if (__DEV__ && typeof position.el === 'string') {
-//       if (!isIdSelector || !document.getElementById(position.el.slice(1))) {
-//         try {
-//           const foundEl = document.querySelector(position.el)
-//           if (isIdSelector && foundEl) {
-//             warn(
-//               `The selector "${position.el}" should be passed as "el: document.querySelector('${position.el}')" because it starts with "#".`
-//             )
-//             // return to avoid other warnings
-//             return
-//           }
-//         } catch (err) {
-//           warn(
-//             `The selector "${position.el}" is invalid. If you are using an id selector, make sure to escape it. You can find more information about escaping characters in selectors at https://mathiasbynens.be/notes/css-escapes or use CSS.escape (https://developer.mozilla.org/en-US/docs/Web/API/CSS/escape).`
-//           )
-//           // return to avoid other warnings
-//           return
-//         }
-//       }
-//     }
+  if ('el' in position) {
+    const positionEl = position.el
+    const isIdSelector =
+      typeof positionEl === 'string' && positionEl.startsWith('#')
+    /**
+     * `id`s can accept pretty much any characters, including CSS combinators
+     * like `>` or `~`. It's still possible to retrieve elements using
+     * `document.getElementById('~')` but it needs to be escaped when using
+     * `document.querySelector('#\\~')` for it to be valid. The only
+     * requirements for `id`s are them to be unique on the page and to not be
+     * empty (`id=""`). Because of that, when passing an id selector, it should
+     * be properly escaped for it to work with `querySelector`. We could check
+     * for the id selector to be simple (no CSS combinators `+ >~`) but that
+     * would make things inconsistent since they are valid characters for an
+     * `id` but would need to be escaped when using `querySelector`, breaking
+     * their usage and ending up in no selector returned. Selectors need to be
+     * escaped:
+     *
+     * - `#1-thing` becomes `#\31 -thing`
+     * - `#with~symbols` becomes `#with\\~symbols`
+     *
+     * - More information about  the topic can be found at
+     *   https://mathiasbynens.be/notes/html5-id-class.
+     * - Practical example: https://mathiasbynens.be/demo/html5-id
+     */
+    if (__DEV__ && typeof position.el === 'string') {
+      if (!isIdSelector || !document.getElementById(position.el.slice(1))) {
+        try {
+          const foundEl = document.querySelector(position.el)
+          if (isIdSelector && foundEl) {
+            warn(
+              `The selector "${position.el}" should be passed as "el: document.querySelector('${position.el}')" because it starts with "#".`
+            )
+            // return to avoid other warnings
+            return
+          }
+        } catch (err) {
+          warn(
+            `The selector "${position.el}" is invalid. If you are using an id selector, make sure to escape it. You can find more information about escaping characters in selectors at https://mathiasbynens.be/notes/css-escapes or use CSS.escape (https://developer.mozilla.org/en-US/docs/Web/API/CSS/escape).`
+          )
+          // return to avoid other warnings
+          return
+        }
+      }
+    }
 
-//     const el =
-//       typeof positionEl === 'string'
-//         ? isIdSelector
-//           ? document.getElementById(positionEl.slice(1))
-//           : document.querySelector(positionEl)
-//         : positionEl
+    const el =
+      typeof positionEl === 'string'
+        ? isIdSelector
+          ? document.getElementById(positionEl.slice(1))
+          : document.querySelector(positionEl)
+        : positionEl
 
-//     if (!el) {
-//       __DEV__ &&
-//         warn(
-//           `Couldn't find element using selector "${position.el}" returned by scrollBehavior.`
-//         )
-//       return
-//     }
-//     scrollToOptions = getElementPosition(el, position)
-//   } else {
-//     scrollToOptions = position
-//   }
+    if (!el) {
+      __DEV__ &&
+        warn(
+          `Couldn't find element using selector "${position.el}" returned by scrollBehavior.`
+        )
+      return
+    }
+    scrollToOptions = getElementPosition(el, position)
+  } else {
+    scrollToOptions = position
+  }
 
-//   if ('scrollBehavior' in document.documentElement.style)
-//     window.scrollTo(scrollToOptions)
-//   else {
-//     window.scrollTo(
-//       scrollToOptions.left != null ? scrollToOptions.left : window.pageXOffset,
-//       scrollToOptions.top != null ? scrollToOptions.top : window.pageYOffset
-//     )
-//   }
-// }
+  if ('scrollBehavior' in document.documentElement.style)
+    window.scrollTo(scrollToOptions)
+  else {
+    window.scrollTo(
+      scrollToOptions.left != null ? scrollToOptions.left : window.pageXOffset,
+      scrollToOptions.top != null ? scrollToOptions.top : window.pageYOffset
+    )
+  }
+}
 
 // export function getScrollKey(path: string, delta: number): string {
 //   const position: number = history.state ? history.state.position - delta : -1

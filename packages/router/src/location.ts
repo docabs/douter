@@ -7,6 +7,7 @@ import {
 import { RouteRecord } from './matcher/types'
 import { warn } from './warning'
 import { isArray } from './utils'
+import { decode } from './encoding'
 
 /**
  * Location object returned by {@link `parseURL`}.
@@ -85,7 +86,7 @@ export function parseURL(
     fullPath: path + (searchString && '?') + searchString + hash,
     path,
     query,
-    hash,
+    hash: decode(hash),
   }
 }
 
@@ -218,7 +219,7 @@ export function resolveRelativePath(to: string, from: string): string {
   // make . and ./ the same (../ === .., ../../ === ../..)
   // this is the same behavior as new URL()
   if (lastToSegment === '..' || lastToSegment === '.') {
-    //     toSegments.push('')
+    toSegments.push('')
   }
 
   let position = fromSegments.length - 1

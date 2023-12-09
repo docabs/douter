@@ -43,13 +43,13 @@ export function createRouteRecordMatcher(
     alias: [],
   })
 
-  //   if (parent) {
-  //     // both are aliases or both are not aliases
-  //     // we don't want to mix them because the order is used when
-  //     // passing originalRecord in Matcher.addRoute
-  //     if (!matcher.record.aliasOf === !parent.record.aliasOf)
-  //       parent.children.push(matcher)
-  //   }
+  if (parent) {
+    // both are aliases or both are not aliases
+    // we don't want to mix them because the order is used when
+    // passing originalRecord in Matcher.addRoute
+    if (!matcher.record.aliasOf === !parent.record.aliasOf)
+      parent.children.push(matcher)
+  }
 
   return matcher
 }

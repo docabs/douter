@@ -134,16 +134,16 @@ export function normalizeQuery(
 ): LocationQuery {
   const normalizedQuery: LocationQuery = {}
 
-//   for (const key in query) {
-//     const value = query[key]
-//     if (value !== undefined) {
-//       normalizedQuery[key] = isArray(value)
-//         ? value.map(v => (v == null ? null : '' + v))
-//         : value == null
-//         ? value
-//         : '' + value
-//     }
-//   }
+  for (const key in query) {
+    const value = query[key]
+    if (value !== undefined) {
+      normalizedQuery[key] = isArray(value)
+        ? value.map(v => (v == null ? null : '' + v))
+        : value == null
+        ? value
+        : '' + value
+    }
+  }
 
   return normalizedQuery
 }

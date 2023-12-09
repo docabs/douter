@@ -1,22 +1,22 @@
 import { JSDOM, ConstructorOptions } from 'jsdom'
 import {
-  // NavigationGuard,
-  // RouteRecordMultipleViews,
-  // MatcherLocation,
-  // RouteLocationNormalized,
+  NavigationGuard,
+  RouteRecordMultipleViews,
+  MatcherLocation,
+  RouteLocationNormalized,
   RouteComponent,
   RouteRecordRaw,
   RouteRecordName,
-  // _RouteRecordProps,
+  _RouteRecordProps,
 } from '../src/types'
 import { h, ComponentOptions } from 'docuejs'
 import {
-  // RouterOptions,
-  // createWebHistory,
-  // createRouter,
+  RouterOptions,
+  createWebHistory,
+  createRouter,
   Router,
   RouterView,
-  // RouteRecordNormalized,
+  RouteRecordNormalized,
 } from '../src'
 
 export const tick = (time?: number) =>
@@ -25,65 +25,65 @@ export const tick = (time?: number) =>
     else process.nextTick(resolve)
   })
 
-// export async function ticks(n: number) {
-//   for (let i = 0; i < n; i++) {
-//     await tick()
-//   }
-// }
+export async function ticks(n: number) {
+  for (let i = 0; i < n; i++) {
+    await tick()
+  }
+}
 
-// export const delay = (t: number) => new Promise(r => setTimeout(r, t))
+export const delay = (t: number) => new Promise(r => setTimeout(r, t))
 
 export function nextNavigation(router: Router) {
   return new Promise((resolve, reject) => {
-    // let removeAfter = router.afterEach((_to, _from, failure) => {
-    //   removeAfter()
-    //   removeError()
-    //   resolve(failure)
-    // })
-    // let removeError = router.onError(err => {
-    //   removeAfter()
-    //   removeError()
-    //   reject(err)
-    // })
+    let removeAfter = router.afterEach((_to, _from, failure) => {
+      removeAfter()
+      removeError()
+      resolve(failure)
+    })
+    let removeError = router.onError(err => {
+      removeAfter()
+      removeError()
+      reject(err)
+    })
   })
 }
 
-// export interface RouteRecordViewLoose
-//   extends Pick<
-//     RouteRecordMultipleViews,
-//     'path' | 'name' | 'meta' | 'beforeEnter'
-//   > {
-//   leaveGuards?: any
-//   updateGuards?: any
-//   instances: Record<string, any>
-//   enterCallbacks: Record<string, Function[]>
-//   props: Record<string, _RouteRecordProps>
-//   aliasOf: RouteRecordNormalized | RouteRecordViewLoose | undefined
-//   children?: RouteRecordRaw[]
-//   components: Record<string, RouteComponent> | null | undefined
-// }
+export interface RouteRecordViewLoose
+  extends Pick<
+    RouteRecordMultipleViews,
+    'path' | 'name' | 'meta' | 'beforeEnter'
+  > {
+  leaveGuards?: any
+  updateGuards?: any
+  instances: Record<string, any>
+  enterCallbacks: Record<string, Function[]>
+  props: Record<string, _RouteRecordProps>
+  aliasOf: RouteRecordNormalized | RouteRecordViewLoose | undefined
+  children?: RouteRecordRaw[]
+  components: Record<string, RouteComponent> | null | undefined
+}
 
-// // @ts-expect-error we are intentionally overriding the type
-// export interface RouteLocationNormalizedLoose extends RouteLocationNormalized {
-//   name: RouteRecordName | null | undefined
-//   path: string
-//   // record?
-//   params: any
-//   redirectedFrom?: Partial<MatcherLocation>
-//   meta: any
-//   matched: Partial<RouteRecordViewLoose>[]
-// }
+// @ts-expect-error we are intentionally overriding the type
+export interface RouteLocationNormalizedLoose extends RouteLocationNormalized {
+  name: RouteRecordName | null | undefined
+  path: string
+  // record?
+  params: any
+  redirectedFrom?: Partial<MatcherLocation>
+  meta: any
+  matched: Partial<RouteRecordViewLoose>[]
+}
 
-// export interface MatcherLocationNormalizedLoose {
-//   name: string
-//   path: string
-//   // record?
-//   params: any
-//   redirectedFrom?: Partial<MatcherLocation>
-//   meta: any
-//   matched: Partial<RouteRecordViewLoose>[]
-//   instances: Record<string, any>
-// }
+export interface MatcherLocationNormalizedLoose {
+  name: string
+  path: string
+  // record?
+  params: any
+  redirectedFrom?: Partial<MatcherLocation>
+  meta: any
+  matched: Partial<RouteRecordViewLoose>[]
+  instances: Record<string, any>
+}
 
 // declare global {
 //   namespace NodeJS {
@@ -121,9 +121,9 @@ export function createDom(options?: ConstructorOptions) {
   return dom
 }
 
-// export const noGuard: NavigationGuard = (to, from, next) => {
-//   next()
-// }
+export const noGuard: NavigationGuard = (to, from, next) => {
+  next()
+}
 
 export const components = {
   Home: { render: () => h('div', {}, 'Home') },
@@ -168,11 +168,11 @@ export const components = {
   } as RouteComponent,
 }
 
-// export function newRouter(
-//   options: Partial<RouterOptions> & { routes: RouteRecordRaw[] }
-// ) {
-//   return createRouter({
-//     history: options.history || createWebHistory(),
-//     ...options,
-//   })
-// }
+export function newRouter(
+  options: Partial<RouterOptions> & { routes: RouteRecordRaw[] }
+) {
+  return createRouter({
+    history: options.history || createWebHistory(),
+    ...options,
+  })
+}

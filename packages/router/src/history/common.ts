@@ -82,11 +82,11 @@ export interface RouterHistory {
    * Current History location
    */
   readonly location: HistoryLocation
-  //   /**
-  //    * Current History state
-  //    */
-  //   readonly state: HistoryState
-  //   // readonly location: ValueContainer<HistoryLocationNormalized>
+  /**
+   * Current History state
+   */
+  readonly state: HistoryState
+  // readonly location: ValueContainer<HistoryLocationNormalized>
 
   /**
    * Navigates to a location. In the case of an HTML5 History implementation,
@@ -107,21 +107,21 @@ export interface RouterHistory {
    */
   replace(to: HistoryLocation, data?: HistoryState): void
 
-  //   /**
-  //    * Traverses history in a given direction.
-  //    *
-  //    * @example
-  //    * ```js
-  //    * myHistory.go(-1) // equivalent to window.history.back()
-  //    * myHistory.go(1) // equivalent to window.history.forward()
-  //    * ```
-  //    *
-  //    * @param delta - distance to travel. If delta is \< 0, it will go back,
-  //    * if it's \> 0, it will go forward by that amount of entries.
-  //    * @param triggerListeners - whether this should trigger listeners attached to
-  //    * the history
-  //    */
-  //   go(delta: number, triggerListeners?: boolean): void
+  /**
+   * Traverses history in a given direction.
+   *
+   * @example
+   * ```js
+   * myHistory.go(-1) // equivalent to window.history.back()
+   * myHistory.go(1) // equivalent to window.history.forward()
+   * ```
+   *
+   * @param delta - distance to travel. If delta is \< 0, it will go back,
+   * if it's \> 0, it will go forward by that amount of entries.
+   * @param triggerListeners - whether this should trigger listeners attached to
+   * the history
+   */
+  go(delta: number, triggerListeners?: boolean): void
 
   /**
    * Attach a listener to the History implementation that is triggered when the
@@ -141,10 +141,10 @@ export interface RouterHistory {
    */
   createHref(location: HistoryLocation): string
 
-  //   /**
-  //    * Clears any event listener attached by the history implementation.
-  //    */
-  //   destroy(): void
+  /**
+   * Clears any event listener attached by the history implementation.
+   */
+  destroy(): void
 }
 
 // Generic utils
