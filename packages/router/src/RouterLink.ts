@@ -85,7 +85,7 @@ export interface UseLinkDevtoolsContext {
   isExactActive: boolean
 }
 
-export type UseLinkOptions = VueUseOptions<RouterLinkOptions>
+export type UseLinkOptions = DocueUseOptions<RouterLinkOptions>
 
 // TODO: we could allow currentRoute as a prop to expose `isActive` and
 // `isExactActive` behavior should go through an RFC

@@ -82,12 +82,12 @@ export {
   onBeforeRouteUpdate,
   loadRouteLocation,
 } from './navigationGuards'
-// export { RouterLink, useLink } from './RouterLink'
-// export type {
-//   _RouterLinkI,
-//   RouterLinkProps,
-//   UseLinkOptions,
-// } from './RouterLink'
+export { RouterLink, useLink } from './RouterLink'
+export type {
+  _RouterLinkI,
+  RouterLinkProps,
+  UseLinkOptions,
+} from './RouterLink'
 export { RouterView } from './RouterView'
 export type { RouterViewProps } from './RouterView'
 

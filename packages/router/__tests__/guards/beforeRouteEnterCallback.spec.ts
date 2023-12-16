@@ -3,7 +3,7 @@
  */
 import { defineComponent, h } from 'docuejs'
 import { mount } from '@docue/test-utils'
-import { createRouter, createMemoryHistory, RouterOptions } from '../../src'
+import { createRouter, createMemoryHistory, RouterOptions, RouterView } from '../../src'
 
 const nextCallbacks = {
   Default: jest.fn(),

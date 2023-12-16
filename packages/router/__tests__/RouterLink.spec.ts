@@ -10,11 +10,11 @@ import {
 } from '../src/types'
 import { createMemoryHistory, RouterOptions } from '../src'
 import { createMockedRoute } from './mount'
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType } from 'docuejs'
 import { RouteRecordNormalized } from '../src/matcher/types'
 import { routerKey } from '../src/injectionSymbols'
 import { tick } from './utils'
-import { mount } from '@vue/test-utils'
+import { mount } from '@docue/test-utils'
 
 const records = {
   home: {} as RouteRecordNormalized,

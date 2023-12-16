@@ -9,7 +9,7 @@ import type { Router } from './router'
 import type { TypesConfig } from './config'
 
 // TODO: figure out why it cannot be 'vue' like said in docs
-declare module '@vue/runtime-core' {
+declare module '@docue/runtime-core' {
   export interface ComponentCustomOptions {
     /**
      * Guard called when the router is navigating to the route that is rendering

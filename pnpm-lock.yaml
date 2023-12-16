@@ -60,6 +60,9 @@ importers:
       '@docue/compiler-sfc':
         specifier: ^0.0
         version: 0.0.3
+      '@docue/tsconfig':
+        specifier: ^0.3.0
+        version: 0.3.0
       '@types/node':
         specifier: ^18.16.19
         version: 18.16.19
@@ -598,6 +601,10 @@ packages:
       docue-component-type-helpers: 0.0.2
       docuejs: 0.0.3(typescript@5.1.6)
       js-beautify: 1.14.9
+    dev: true
+
+  /@docue/tsconfig@0.3.0:
+    resolution: {integrity: sha512-apOd/pRBc7LVmHzwexR9GeKGfEwl5wJz9ndiZ8w1/MG9bBdNngtGc0iNptMp/ti8UEyPVC6zel1dbHjvh04Q5A==}
     dev: true
 
   /@esbuild/android-arm64@0.18.20:

@@ -18,10 +18,10 @@ import { RouterHistory, HistoryState, NavigationType } from './history/common'
 import {
   ScrollPosition,
   // getSavedScrollPosition,
-  // getScrollKey,
+  getScrollKey,
   // saveScrollPosition,
-  // computeScrollPosition,
-  // scrollToPosition,
+  computeScrollPosition,
+  scrollToPosition,
   _ScrollPositionNormalized,
 } from './scrollBehavior'
 import { createRouterMatcher, PathParserOptions } from './matcher'
@@ -51,8 +51,8 @@ import {
 } from './location'
 import { extractComponentsGuards, guardToPromiseFn } from './navigationGuards'
 import { warn } from './warning'
-// import { RouterLink } from './RouterLink'
-// import { RouterView } from './RouterView'
+import { RouterLink } from './RouterLink'
+import { RouterView } from './RouterView'
 import {
   routeLocationKey,
   routerKey,
@@ -120,19 +120,19 @@ export interface RouterOptions extends PathParserOptions {
    * Initial list of routes that should be added to the router.
    */
   routes: Readonly<RouteRecordRaw[]>
-  //   /**
-  //    * Function to control scrolling when navigating between pages. Can return a
-  //    * Promise to delay scrolling. Check {@link ScrollBehavior}.
-  //    *
-  //    * @example
-  //    * ```js
-  //    * function scrollBehavior(to, from, savedPosition) {
-  //    *   // `to` and `from` are both route locations
-  //    *   // `savedPosition` can be null if there isn't one
-  //    * }
-  //    * ```
-  //    */
-  //   scrollBehavior?: RouterScrollBehavior
+  /**
+   * Function to control scrolling when navigating between pages. Can return a
+   * Promise to delay scrolling. Check {@link ScrollBehavior}.
+   *
+   * @example
+   * ```js
+   * function scrollBehavior(to, from, savedPosition) {
+   *   // `to` and `from` are both route locations
+   *   // `savedPosition` can be null if there isn't one
+   * }
+   * ```
+   */
+  scrollBehavior?: RouterScrollBehavior
   /**
    * Custom implementation to parse a query. See its counterpart,
    * {@link RouterOptions.stringifyQuery}.
@@ -156,21 +156,21 @@ export interface RouterOptions extends PathParserOptions {
    * {@link RouterOptions.parseQuery | parseQuery} counterpart to handle query parsing.
    */
   stringifyQuery?: typeof originalStringifyQuery
-  //   /**
-  //    * Default class applied to active {@link RouterLink}. If none is provided,
-  //    * `router-link-active` will be applied.
-  //    */
-  //   linkActiveClass?: string
-  //   /**
-  //    * Default class applied to exact active {@link RouterLink}. If none is provided,
-  //    * `router-link-exact-active` will be applied.
-  //    */
-  //   linkExactActiveClass?: string
-  //   /**
-  //    * Default class applied to non-active {@link RouterLink}. If none is provided,
-  //    * `router-link-inactive` will be applied.
-  //    */
-  //   // linkInactiveClass?: string
+  /**
+   * Default class applied to active {@link RouterLink}. If none is provided,
+   * `router-link-active` will be applied.
+   */
+  linkActiveClass?: string
+  /**
+   * Default class applied to exact active {@link RouterLink}. If none is provided,
+   * `router-link-exact-active` will be applied.
+   */
+  linkExactActiveClass?: string
+  /**
+   * Default class applied to non-active {@link RouterLink}. If none is provided,
+   * `router-link-inactive` will be applied.
+   */
+  // linkInactiveClass?: string
 }
 
 /**
@@ -185,10 +185,10 @@ export interface Router {
    * Current {@link RouteLocationNormalized}
    */
   readonly currentRoute: Ref<RouteLocationNormalizedLoaded>
-  //   /**
-  //    * Original options object passed to create the Router
-  //    */
-  //   readonly options: RouterOptions
+  /**
+   * Original options object passed to create the Router
+   */
+  readonly options: RouterOptions
 
   /**
    * Allows turning off the listening of history events. This is a low level api for micro-frontends.
@@ -465,17 +465,17 @@ export function createRouter(options: RouterOptions): Router {
 
     // path could be relative in object as well
     if ('path' in rawLocation) {
-      //       if (
-      //         __DEV__ &&
-      //         'params' in rawLocation &&
-      //         !('name' in rawLocation) &&
-      //         // @ts-expect-error: the type is never
-      //         Object.keys(rawLocation.params).length
-      //       ) {
-      //         warn(
-      //           `Path "${rawLocation.path}" was passed with params but they will be ignored. Use a named route alongside params instead.`
-      //         )
-      //       }
+      if (
+        __DEV__ &&
+        'params' in rawLocation &&
+        !('name' in rawLocation) &&
+        // @ts-expect-error: the type is never
+        Object.keys(rawLocation.params).length
+      ) {
+        warn(
+          `Path "${rawLocation.path}" was passed with params but they will be ignored. Use a named route alongside params instead.`
+        )
+      }
       matcherLocation = assign({}, rawLocation, {
         path: parseURL(parseQuery, rawLocation.path, currentLocation.path).path,
       })
@@ -518,19 +518,19 @@ export function createRouter(options: RouterOptions): Router {
     )
 
     const href = routerHistory.createHref(fullPath)
-    //     if (__DEV__) {
-    //       if (href.startsWith('//')) {
-    //         warn(
-    //           `Location "${rawLocation}" resolved to "${href}". A resolved location cannot start with multiple slashes.`
-    //         )
-    //       } else if (!matchedRoute.matched.length) {
-    //         warn(
-    //           `No match found for location with path "${
-    //             'path' in rawLocation ? rawLocation.path : rawLocation
-    //           }"`
-    //         )
-    //       }
-    //     }
+    if (__DEV__) {
+      if (href.startsWith('//')) {
+        warn(
+          `Location "${rawLocation}" resolved to "${href}". A resolved location cannot start with multiple slashes.`
+        )
+      } else if (!matchedRoute.matched.length) {
+        warn(
+          `No match found for location with path "${
+            'path' in rawLocation ? rawLocation.path : rawLocation
+          }"`
+        )
+      }
+    }
 
     return assign(
       {
@@ -604,22 +604,22 @@ export function createRouter(options: RouterOptions): Router {
         // the router parse them again
         newTargetLocation.params = {}
       }
-      //       if (
-      //         __DEV__ &&
-      //         !('path' in newTargetLocation) &&
-      //         !('name' in newTargetLocation)
-      //       ) {
-      //         warn(
-      //           `Invalid redirect found:\n${JSON.stringify(
-      //             newTargetLocation,
-      //             null,
-      //             2
-      //           )}\n when navigating to "${
-      //             to.fullPath
-      //           }". A redirect must contain a name or path. This will break in production.`
-      //         )
-      //         throw new Error('Invalid redirect')
-      //       }
+      if (
+        __DEV__ &&
+        !('path' in newTargetLocation) &&
+        !('name' in newTargetLocation)
+      ) {
+        warn(
+          `Invalid redirect found:\n${JSON.stringify(
+            newTargetLocation,
+            null,
+            2
+          )}\n when navigating to "${
+            to.fullPath
+          }". A redirect must contain a name or path. This will break in production.`
+        )
+        throw new Error('Invalid redirect')
+      }
       return assign(
         {
           query: to.query,
@@ -670,17 +670,17 @@ export function createRouter(options: RouterOptions): Router {
         ErrorTypes.NAVIGATION_DUPLICATED,
         { to: toLocation, from }
       )
-      //       // trigger scroll to allow scrolling to the same anchor
-      //       handleScroll(
-      //         from,
-      //         from,
-      //         // this is a push, the only way for it to be triggered from a
-      //         // history.listen is with a redirect, which makes it become a push
-      //         true,
-      //         // This cannot be the first navigation because the initial location
-      //         // cannot be manually navigated to
-      //         false
-      //       )
+      // trigger scroll to allow scrolling to the same anchor
+      handleScroll(
+        from,
+        from,
+        // this is a push, the only way for it to be triggered from a
+        // history.listen is with a redirect, which makes it become a push
+        true,
+        // This cannot be the first navigation because the initial location
+        // cannot be manually navigated to
+        false
+      )
     }
 
     return (failure ? Promise.resolve(failure) : navigate(toLocation, from))
@@ -698,29 +698,29 @@ export function createRouter(options: RouterOptions): Router {
           if (
             isNavigationFailure(failure, ErrorTypes.NAVIGATION_GUARD_REDIRECT)
           ) {
-            //             if (
-            //               __DEV__ &&
-            //               // we are redirecting to the same location we were already at
-            //               isSameRouteLocation(
-            //                 stringifyQuery,
-            //                 resolve(failure.to),
-            //                 toLocation
-            //               ) &&
-            //               // and we have done it a couple of times
-            //               redirectedFrom &&
-            //               // @ts-expect-error: added only in dev
-            //               (redirectedFrom._count = redirectedFrom._count
-            //                 ? // @ts-expect-error
-            //                   redirectedFrom._count + 1
-            //                 : 1) > 30
-            //             ) {
-            //               warn(
-            //                 `Detected a possibly infinite redirection in a navigation guard when going from "${from.fullPath}" to "${toLocation.fullPath}". Aborting to avoid a Stack Overflow.\n Are you always returning a new location within a navigation guard? That would lead to this error. Only return when redirecting or aborting, that should fix this. This might break in production if not fixed.`
-            //               )
-            //               return Promise.reject(
-            //                 new Error('Infinite redirect in navigation guard')
-            //               )
-            //             }
+            if (
+              __DEV__ &&
+              // we are redirecting to the same location we were already at
+              isSameRouteLocation(
+                stringifyQuery,
+                resolve(failure.to),
+                toLocation
+              ) &&
+              // and we have done it a couple of times
+              redirectedFrom &&
+              // @ts-expect-error: added only in dev
+              (redirectedFrom._count = redirectedFrom._count
+                ? // @ts-expect-error
+                  redirectedFrom._count + 1
+                : 1) > 30
+            ) {
+              warn(
+                `Detected a possibly infinite redirection in a navigation guard when going from "${from.fullPath}" to "${toLocation.fullPath}". Aborting to avoid a Stack Overflow.\n Are you always returning a new location within a navigation guard? That would lead to this error. Only return when redirecting or aborting, that should fix this. This might break in production if not fixed.`
+              )
+              return Promise.reject(
+                new Error('Infinite redirect in navigation guard')
+              )
+            }
             return pushWithRedirect(
               // keep options
               assign(
@@ -1026,7 +1026,7 @@ export function createRouter(options: RouterOptions): Router {
           }
           // do not restore history on unknown direction
           if (info.delta) {
-            //             routerHistory.go(-info.delta, false)
+            routerHistory.go(-info.delta, false)
           }
           // unrecognized error, transfer to the global handler
           return triggerError(error, toLocation, from)
@@ -1133,29 +1133,29 @@ export function createRouter(options: RouterOptions): Router {
     return err
   }
 
-  //   // Scroll behavior
-  //   function handleScroll(
-  //     to: RouteLocationNormalizedLoaded,
-  //     from: RouteLocationNormalizedLoaded,
-  //     isPush: boolean,
-  //     isFirstNavigation: boolean
-  //   ): // the return is not meant to be used
-  //   Promise<unknown> {
-  //     const { scrollBehavior } = options
-  //     if (!isBrowser || !scrollBehavior) return Promise.resolve()
+  // Scroll behavior
+  function handleScroll(
+    to: RouteLocationNormalizedLoaded,
+    from: RouteLocationNormalizedLoaded,
+    isPush: boolean,
+    isFirstNavigation: boolean
+  ): // the return is not meant to be used
+  Promise<unknown> {
+    const { scrollBehavior } = options
+    if (!isBrowser || !scrollBehavior) return Promise.resolve()
 
-  //     const scrollPosition: _ScrollPositionNormalized | null =
-  //       (!isPush && getSavedScrollPosition(getScrollKey(to.fullPath, 0))) ||
-  //       ((isFirstNavigation || !isPush) &&
-  //         (history.state as HistoryState) &&
-  //         history.state.scroll) ||
-  //       null
+    //     const scrollPosition: _ScrollPositionNormalized | null =
+    //       (!isPush && getSavedScrollPosition(getScrollKey(to.fullPath, 0))) ||
+    //       ((isFirstNavigation || !isPush) &&
+    //         (history.state as HistoryState) &&
+    //         history.state.scroll) ||
+    //       null
 
-  //     return nextTick()
-  //       .then(() => scrollBehavior(to, from, scrollPosition))
-  //       .then(position => position && scrollToPosition(position))
-  //       .catch(err => triggerError(err, to, from))
-  //   }
+    return nextTick()
+    //       .then(() => scrollBehavior(to, from, scrollPosition))
+    //       .then(position => position && scrollToPosition(position))
+    //       .catch(err => triggerError(err, to, from))
+  }
 
   const go = (delta: number) => routerHistory.go(delta)
 
@@ -1170,7 +1170,7 @@ export function createRouter(options: RouterOptions): Router {
     hasRoute,
     getRoutes,
     resolve,
-    //     options,
+    options,
     push,
     replace,
     go,
@@ -1183,16 +1183,16 @@ export function createRouter(options: RouterOptions): Router {
     isReady,
     install(app: App) {
       const router = this
-      //       app.component('RouterLink', RouterLink)
-      //       app.component('RouterView', RouterView)
-      //       app.config.globalProperties.$router = router
-      //       Object.defineProperty(app.config.globalProperties, '$route', {
-      //         enumerable: true,
-      //         get: () => unref(currentRoute),
-      //       })
-      //       // this initial navigation is only necessary on client, on server it doesn't
-      //       // make sense because it will create an extra unnecessary navigation and could
-      //       // lead to problems
+      app.component('RouterLink', RouterLink)
+      app.component('RouterView', RouterView)
+      app.config.globalProperties.$router = router
+      Object.defineProperty(app.config.globalProperties, '$route', {
+        enumerable: true,
+        get: () => unref(currentRoute),
+      })
+      // this initial navigation is only necessary on client, on server it doesn't
+      // make sense because it will create an extra unnecessary navigation and could
+      // lead to problems
       if (
         isBrowser &&
         // used for the initial navigation client side to avoid pushing

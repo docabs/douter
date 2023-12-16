@@ -152,12 +152,12 @@ export function scrollToPosition(position: ScrollPosition): void {
   }
 }
 
-// export function getScrollKey(path: string, delta: number): string {
-//   const position: number = history.state ? history.state.position - delta : -1
-//   return position + path
-// }
+export function getScrollKey(path: string, delta: number): string {
+  const position: number = history.state ? history.state.position - delta : -1
+  return position + path
+}
 
-// export const scrollPositions = new Map<string, _ScrollPositionNormalized>()
+export const scrollPositions = new Map<string, _ScrollPositionNormalized>()
 
 // export function saveScrollPosition(
 //   key: string,

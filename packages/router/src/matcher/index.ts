@@ -136,8 +136,8 @@ export function createRouterMatcher(
       // create the object beforehand, so it can be passed to children
       matcher = createRouteRecordMatcher(normalizedRecord, parent, options)
 
-      //       if (__DEV__ && parent && path[0] === '/')
-      //         checkMissingParamsInAbsolutePath(matcher, parent)
+      if (__DEV__ && parent && path[0] === '/')
+        checkMissingParamsInAbsolutePath(matcher, parent)
 
       // if we are an alias we must tell the original record that we exist,
       // so we can be removed
@@ -512,17 +512,17 @@ function checkChildMissingNameWithEmptyPath(
   }
 }
 
-// function checkMissingParamsInAbsolutePath(
-//   record: RouteRecordMatcher,
-//   parent: RouteRecordMatcher
-// ) {
-//   for (const key of parent.keys) {
-//     if (!record.keys.find(isSameParam.bind(null, key)))
-//       return warn(
-//         `Absolute path "${record.record.path}" must have the exact same param named "${key.name}" as its parent "${parent.record.path}".`
-//       )
-//   }
-// }
+function checkMissingParamsInAbsolutePath(
+  record: RouteRecordMatcher,
+  parent: RouteRecordMatcher
+) {
+  for (const key of parent.keys) {
+    if (!record.keys.find(isSameParam.bind(null, key)))
+      return warn(
+        `Absolute path "${record.record.path}" must have the exact same param named "${key.name}" as its parent "${parent.record.path}".`
+      )
+  }
+}
 
 function isRecordChildOf(
   record: RouteRecordMatcher,
